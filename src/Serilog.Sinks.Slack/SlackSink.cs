@@ -23,7 +23,7 @@ namespace Serilog.Sinks.Slack
             {
                 var client = new RestClient(_webhookUrl);
                 var request = new RestRequest(Method.POST);
-                dynamic body = new { attachments = WrapInAttachment(logEvent).ToArray() };
+                dynamic body = new { text = logEvent.RenderMessage(), attachments = WrapInAttachment(logEvent).ToArray() };
                 request.AddJsonBody(body);
                 await client.ExecuteTaskAsync(request);
             }
@@ -39,7 +39,7 @@ namespace Serilog.Sinks.Slack
                 fields = new[]
                 {
                     CreateAttachmentField("Level", log.Level.ToString()),
-                    CreateAttachmentField("Message", log.RenderMessage())
+                    CreateAttachmentField("Timestamp", log.Timestamp.ToString())
                 }
             });
 
@@ -53,6 +53,7 @@ namespace Serilog.Sinks.Slack
         {
             return new
             {
+                title = "Exception",
                 fallback = $"Exception: {ex.Message} \n {ex.StackTrace}",
                 color = GetAttachmentColor(LogEventLevel.Fatal),
                 fields = new[]

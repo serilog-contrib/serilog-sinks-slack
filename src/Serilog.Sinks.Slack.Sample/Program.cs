@@ -1,5 +1,4 @@
 ﻿using System;
-using Serilog.Events;
 
 namespace Serilog.Sinks.Slack.Sample
 {
