@@ -8,7 +8,7 @@ namespace Serilog.Sinks.Slack.Sample
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
-                .WriteTo.Slack("https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+                .WriteTo.Slack("https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","#general" ,"Im a Ghost", ":ghost:")
                 .CreateLogger();
 
             Log.Logger.Verbose("1 Verbose");
