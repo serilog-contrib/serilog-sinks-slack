@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using RestSharp;
 using Serilog.Events;
@@ -22,9 +23,66 @@ namespace Serilog.Sinks.Slack
             {
                 var client = new RestClient(_webhookUrl);
                 var request = new RestRequest(Method.POST);
-                dynamic body = new { text = logEvent.RenderMessage() };
+                dynamic body = new { attachments = WrapInAttachment(logEvent).ToArray() };
                 request.AddJsonBody(body);
                 await client.ExecuteTaskAsync(request);
+            }
+        }
+
+        private IEnumerable<dynamic> WrapInAttachment(LogEvent log)
+        {
+            var result = new List<dynamic>();
+            result.Add(new
+            {
+                fallback = $"[{log.Level}]{log.RenderMessage()}",
+                color = GetAttachmentColor(log.Level),
+                fields = new[]
+                {
+                    CreateAttachmentField("Level", log.Level.ToString()),
+                    CreateAttachmentField("Message", log.RenderMessage())
+                }
+            });
+
+            if (log.Exception != null)
+                result.Add(WrapInAttachment(log.Exception));
+
+            return result;
+        }
+
+        private object WrapInAttachment(Exception ex)
+        {
+            return new
+            {
+                fallback = $"Exception: {ex.Message} \n {ex.StackTrace}",
+                color = GetAttachmentColor(LogEventLevel.Fatal),
+                fields = new[]
+                {
+                    CreateAttachmentField("Message", ex.Message),
+                    CreateAttachmentField("Type", ex.GetType().Name),
+                    CreateAttachmentField("Stack Trace", "`"+ex.StackTrace+"`", false)
+                },
+                mrkdwn_in = new[] { "fields" }
+            };
+        }
+
+        private object CreateAttachmentField(string title, string value, bool @short = true)
+        {
+            return new { title, value, @short };
+        }
+
+        private string GetAttachmentColor(LogEventLevel level)
+        {
+            switch (level)
+            {
+                case LogEventLevel.Information:
+                    return "#5bc0de";
+                case LogEventLevel.Warning:
+                    return "#f0ad4e";
+                case LogEventLevel.Error:
+                case LogEventLevel.Fatal:
+                    return "#d9534f";
+                default:
+                    return "#777";
             }
         }
     }
