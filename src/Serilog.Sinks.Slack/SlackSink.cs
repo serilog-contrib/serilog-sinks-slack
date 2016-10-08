@@ -14,10 +14,7 @@ namespace Serilog.Sinks.Slack
     /// </summary>
     public class SlackSink : PeriodicBatchingSink
     {
-        #region Fields
-
         private static readonly HttpClient Client = new HttpClient();
-
         private static readonly Dictionary<LogEventLevel, string> Colors = new Dictionary<LogEventLevel, string>
         {
             {LogEventLevel.Verbose, "#777"},
@@ -28,17 +25,10 @@ namespace Serilog.Sinks.Slack
             {LogEventLevel.Fatal, "#d9534f"}
         };
 
-        private readonly string _webhookUrl;
-
-        private readonly string _customChannel;
-
+		private readonly string _webhookUrl;
+		private readonly string _customChannel;
         private readonly string _customUserName;
-
         private readonly string _customIcon;
-
-        #endregion
-
-        #region Constructors
 
         /// <summary>
         /// Initializes new instance of <see cref="SlackSink"/>.
@@ -59,8 +49,6 @@ namespace Serilog.Sinks.Slack
             _customUserName = customUserName;
             _customIcon = customIcon;
         }
-
-        #endregion
 
         /// <summary>
         /// Overrides <see cref="PeriodicBatchingSink.EmitBatchAsync"/> method and uses <see cref="HttpClient"/> to post <see cref="LogEvent"/> to Slack.

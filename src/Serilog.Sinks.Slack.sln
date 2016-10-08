@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Slack", "Serilog.Sinks.Slack\Serilog.Sinks.Slack.csproj", "{A75FA4DC-27AF-46EA-BB5B-8F1ABBF33645}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.Sinks.Slack.Test", "Serilog.Sinks.Slack.Test\Serilog.Sinks.Slack.Test.csproj", "{E346ABEC-CD1F-4630-9863-0562586DA590}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{A75FA4DC-27AF-46EA-BB5B-8F1ABBF33645}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A75FA4DC-27AF-46EA-BB5B-8F1ABBF33645}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A75FA4DC-27AF-46EA-BB5B-8F1ABBF33645}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E346ABEC-CD1F-4630-9863-0562586DA590}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E346ABEC-CD1F-4630-9863-0562586DA590}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E346ABEC-CD1F-4630-9863-0562586DA590}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E346ABEC-CD1F-4630-9863-0562586DA590}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
