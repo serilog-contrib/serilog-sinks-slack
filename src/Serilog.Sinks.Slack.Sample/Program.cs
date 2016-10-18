@@ -25,6 +25,8 @@ namespace Serilog.Sinks.Slack.Sample
             Log.Logger.Information("5 Information");
             Log.Logger.Warning("6 Warning");
             Log.Logger.Debug("7 Formatting {myProp}", new { myProp = "test" });
+
+            Console.Read();
         }
     }
 }
