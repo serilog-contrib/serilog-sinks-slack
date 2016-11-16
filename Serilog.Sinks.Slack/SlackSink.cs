@@ -25,8 +25,8 @@ namespace Serilog.Sinks.Slack
             {LogEventLevel.Fatal, "#d9534f"}
         };
 
-		private readonly string _webhookUrl;
-		private readonly string _customChannel;
+        private readonly string _webhookUrl;
+        private readonly string _customChannel;
         private readonly string _customUserName;
         private readonly string _customIcon;
 

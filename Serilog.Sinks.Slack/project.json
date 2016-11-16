@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0-*",
+  "title": "Serilog.Sinks.Slack",
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+    "Newtonsoft.Json": "9.0.1",
+    "Serilog": "2.3.0",
+    "Serilog.Sinks.PeriodicBatching": "2.1.0"
+  },
+
+  "frameworks": {
+    "net45": {
+    },
+    "net46": {
+    },
+    "netstandard1.3": {
+    }
+  }
+}

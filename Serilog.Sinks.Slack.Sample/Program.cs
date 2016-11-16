@@ -1,15 +1,17 @@
 ﻿using System;
+using Serilog.Events;
 
 namespace Serilog.Sinks.Slack.Sample
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.Slack("https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX","#general" ,"Im a Ghost", ":ghost:")
-                .CreateLogger();
+               .MinimumLevel.Verbose()
+               .WriteTo.Console(LogEventLevel.Debug)
+               .WriteTo.Slack("https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", "#general", "Im a Ghost", ":ghost:")
+               .CreateLogger();
 
             Log.Logger.Verbose("1 Verbose");
             Log.Logger.Debug("2 Debug");
@@ -25,6 +27,7 @@ namespace Serilog.Sinks.Slack.Sample
             Log.Logger.Information("5 Information");
             Log.Logger.Warning("6 Warning");
             Log.Logger.Debug("7 Formatting {myProp}", new { myProp = "test" });
+            Console.ReadKey();
         }
     }
 }
