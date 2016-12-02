@@ -1,5 +1,11 @@
-version: '{build}'
+version: '1.0.{build}'
 before_build:
 - cmd: dotnet restore
 build:
+  publish_nuget: true
   verbosity: minimal
+deploy:
+- provider: Environment
+    name: nuget.org
+    on:
+      branch: master  
