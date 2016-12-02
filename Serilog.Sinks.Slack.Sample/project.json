@@ -10,7 +10,7 @@
       "version": "1.0.1"
     },
     "Serilog.Sinks.Console": "2.1.0",
-    "Serilog.Sinks.Slack": "1.0.0-*"
+    "Serilog.Sinks.Slack": "1.1.0"
   },
 
   "frameworks": {

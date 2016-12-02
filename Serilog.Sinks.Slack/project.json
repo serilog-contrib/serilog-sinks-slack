@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0-*",
+  "version": "1.1.0",
   "title": "Serilog.Sinks.Slack",
   "dependencies": {
     "NETStandard.Library": "1.6.0",
@@ -7,7 +7,19 @@
     "Serilog": "2.3.0",
     "Serilog.Sinks.PeriodicBatching": "2.1.0"
   },
-
+  "authors": [ "mgibas", "Sergey Kuznetsov" ],
+  "copyright": "Copyright 2016",
+  "packOptions": {
+    "summary": "Serilog sink for Slack",
+    "tags": [ "Serilog", "Sink", "Slack" ],
+    "owners": [ "gibasmaciej", "phnx47" ],
+    "projectUrl": "https://github.com/mgibas/serilog-sinks-slack",
+    "licenseUrl": "https://opensource.org/licenses/MIT",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/mgibas/serilog-sinks-slack"
+    }
+  },
   "frameworks": {
     "net45": {
     },
