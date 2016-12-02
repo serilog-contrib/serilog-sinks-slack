@@ -1,0 +1,6 @@
+{
+  "projects": [
+    "Serilog.Sinks.Slack",
+    "Serilog.Sinks.Slack.Sample"
+  ]
+}
