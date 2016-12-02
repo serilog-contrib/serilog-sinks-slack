@@ -6,6 +6,6 @@ build:
   verbosity: minimal
 deploy:
 - provider: Environment
-    name: nuget.org
+    name: 'nuget.org'
     on:
       branch: master  
