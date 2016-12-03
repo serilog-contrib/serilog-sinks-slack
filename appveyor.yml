@@ -6,9 +6,9 @@ build:
   publish_nuget: true
   verbosity: minimal
 after_build:
-- dotnet pack "Serilog.Sinks.Slack\project.json" -c Release
+- dotnet pack -c Release
 artifacts:
-- path: Serilog.Sinks.Slack\bin\Release\*.nupkg
+- path: bin\Release\*.nupkg
 deploy:
 - provider: Environment
   name: nuget.org
