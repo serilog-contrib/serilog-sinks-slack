@@ -1,7 +1,7 @@
 version: '1.1.{build}'
 before_build:
 - cmd: dotnet restore
-- cmd: cd Serilog.Sinks.Slack && dotnet version {version}
+- cmd: cd Serilog.Sinks.Slack && dotnet version %APPVEYOR_BUILD_VERSION%
 build:
   publish_nuget: true
   verbosity: minimal
