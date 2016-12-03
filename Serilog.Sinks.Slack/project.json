@@ -1,5 +1,5 @@
 {
-  "version": "{version}",
+  "version": "1.1.0",
   "title": "Serilog.Sinks.Slack",
   "dependencies": {
     "NETStandard.Library": "1.6.0",
