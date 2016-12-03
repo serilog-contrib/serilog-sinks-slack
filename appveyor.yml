@@ -4,6 +4,8 @@ before_build:
 build:
   publish_nuget: true
   verbosity: minimal
+before_build:
+- dotnet version set --new-version {version}
 after_build:
 - dotnet pack "Serilog.Sinks.Slack\project.json" -c Release
 artifacts:
