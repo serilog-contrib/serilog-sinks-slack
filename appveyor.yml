@@ -1,14 +1,14 @@
 version: '1.1.{build}'
 before_build:
 - cmd: dotnet restore
-- cmd: cd Serilog.Sinks.Slack && dotnet version %APPVEYOR_BUILD_VERSION%
+- cmd: cd Serilog.Sinks.Slack && dotnet version %APPVEYOR_BUILD_VERSION% && cd ..
 build:
   publish_nuget: true
   verbosity: minimal
 after_build:
-- dotnet pack -c Release
+- dotnet pack "Serilog.Sinks.Slack\project.json" -c Release
 artifacts:
-- path: bin\Release\*.nupkg
+- path: Serilog.Sinks.Slack\bin\Release\*.nupkg
 deploy:
 - provider: Environment
   name: nuget.org
