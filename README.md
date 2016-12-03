@@ -11,6 +11,11 @@
         <img src="https://img.shields.io/nuget/v/Serilog.Sinks.Slack.svg?style=flat-square"></img>
     </a>
 </p>
+<p align="center">
+    <img src="https://img.shields.io/badge/.net-4.5-green.svg"></img>
+    <img src="https://img.shields.io/badge/.net-4.6-green.svg"></img>
+    <img src="https://img.shields.io/badge/.net%20core-1.3-green.svg"></img>
+</p>
 
 ===
 
