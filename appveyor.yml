@@ -4,6 +4,8 @@ before_build:
 build:
   publish_nuget: true
   verbosity: minimal
+after_build:
+- dotnet pack -c Release
 deploy:
 - provider: Environment
   name: nuget.org
