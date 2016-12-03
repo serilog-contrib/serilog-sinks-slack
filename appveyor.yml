@@ -1,11 +1,10 @@
 version: '1.1.{build}'
 before_build:
 - cmd: dotnet restore
+- dotnet version set --new-version {version}
 build:
   publish_nuget: true
   verbosity: minimal
-before_build:
-- dotnet version set --new-version {version}
 after_build:
 - dotnet pack "Serilog.Sinks.Slack\project.json" -c Release
 artifacts:
