@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -15,6 +14,12 @@ namespace Serilog.Sinks.Slack
     public class SlackSink : PeriodicBatchingSink
     {
         private static readonly HttpClient Client = new HttpClient();
+
+        private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        {
+            NullValueHandling = NullValueHandling.Ignore
+        };
+
         private static readonly Dictionary<LogEventLevel, string> Colors = new Dictionary<LogEventLevel, string>
         {
             {LogEventLevel.Verbose, "#777"},
@@ -34,15 +39,13 @@ namespace Serilog.Sinks.Slack
         /// Initializes new instance of <see cref="SlackSink"/>.
         /// </summary>
         /// <param name="webhookUrl">Slack team post URI.</param>
+        /// <param name="batchSizeLimit">The time to wait between checking for event batches.</param>
+        /// <param name="period">The time to wait between checking for event batches..</param>
         /// <param name="customChannel">Name of Slack channel to which message should be posted.</param>
         /// <param name="customUserName">User name that will be displayed as a name of the message sender.</param>
         /// <param name="customIcon">Icon that will be used as a sender avatar.</param>
-        public SlackSink(
-            string webhookUrl,
-            string customChannel = null,
-            string customUserName = null,
-            string customIcon = null)
-            : base(50, TimeSpan.FromSeconds(5))
+        public SlackSink(string webhookUrl, int batchSizeLimit, TimeSpan period, string customChannel = null, string customUserName = null, string customIcon = null)
+            : base(batchSizeLimit, period)
         {
             _webhookUrl = webhookUrl;
             _customChannel = customChannel;
@@ -60,37 +63,37 @@ namespace Serilog.Sinks.Slack
             foreach (var logEvent in events)
             {
                 var message = CreateMessage(logEvent, _customChannel, _customUserName, _customIcon);
-
-                var json = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.Indented);
-
+                var json = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.Indented, jsonSerializerSettings);
                 await Client.PostAsync(_webhookUrl, new StringContent(json));
             }
         }
 
         private static dynamic CreateMessage(LogEvent logEvent, string channel, string username, string emoji)
         {
-            dynamic message = new ExpandoObject();
-            message.text = logEvent.RenderMessage();
-            message.channel = string.IsNullOrWhiteSpace(channel) ? string.Empty : channel;
-            message.username = string.IsNullOrWhiteSpace(username) ? string.Empty : username;
-            message.icon_emoji = string.IsNullOrWhiteSpace(emoji) ? string.Empty : emoji;
-            message.attachments = CreateAttachments(logEvent);
+            var message = new Message
+            {
+                Text = logEvent.RenderMessage(),
+                Channel = string.IsNullOrWhiteSpace(channel) ? string.Empty : channel,
+                UserName = string.IsNullOrWhiteSpace(username) ? string.Empty : username,
+                IconEmoji = string.IsNullOrWhiteSpace(emoji) ? string.Empty : emoji,
+                Attachments = CreateAttachments(logEvent)
+            };
 
             return message;
         }
 
-        private static List<dynamic> CreateAttachments(LogEvent logEvent)
+        private static List<Attachment> CreateAttachments(LogEvent logEvent)
         {
-            var attachments = new List<dynamic>
+            var attachments = new List<Attachment>
             {
-                new
+                new Attachment
                 {
-                    fallback = $"[{logEvent.Level}]{logEvent.RenderMessage()}",
-                    color = Colors[logEvent.Level],
-                    fields = new List<dynamic>
+                    Fallback = $"[{logEvent.Level}]{logEvent.RenderMessage()}",
+                    Color = Colors[logEvent.Level],
+                    Fields = new List<Field>
                     {
-                        new {title = "Level", value = logEvent.Level.ToString()},
-                        new {title = "Timestamp", value = logEvent.Timestamp.ToString()}
+                        new Field{Title = "Level", Value = logEvent.Level.ToString()},
+                        new Field{Title = "Timestamp", Value = logEvent.Timestamp.ToString()}
                     }
                 }
             };
@@ -98,18 +101,18 @@ namespace Serilog.Sinks.Slack
             if (logEvent.Exception == null)
                 return attachments;
 
-            attachments.Add(new
+            attachments.Add(new Attachment
             {
-                title = "Exception",
-                fallback = $"Exception: {logEvent.Exception.Message} \n {logEvent.Exception.StackTrace}",
-                color = Colors[LogEventLevel.Fatal],
-                fields = new List<dynamic>
+                Title = "Exception",
+                Fallback = $"Exception: {logEvent.Exception.Message} \n {logEvent.Exception.StackTrace}",
+                Color = Colors[LogEventLevel.Fatal],
+                Fields = new List<Field>
                 {
-                    new {title = "Message", value = logEvent.Exception.Message},
-                    new {title = "Type", value = "`" + logEvent.Exception.GetType().Name + "`"},
-                    new {title = "Stack Trace", value = "```" + logEvent.Exception.StackTrace + "```", @short = false}
+                    new Field{Title = "Message", Value = logEvent.Exception.Message},
+                    new Field{Title = "Type", Value = "`" + logEvent.Exception.GetType().Name + "`"},
+                    new Field{Title = "Stack Trace", Value = "```" + logEvent.Exception.StackTrace + "```", Short = false}
                 },
-                mrkdwn_in = new List<string> { "fields" }
+                MrkdwnIn = new List<string> { "fields" }
             });
 
             return attachments;
