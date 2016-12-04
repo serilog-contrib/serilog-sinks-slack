@@ -3,14 +3,15 @@
   "buildOptions": {
     "emitEntryPoint": true
   },
-
   "dependencies": {
     "Microsoft.NETCore.App": {
       "type": "platform",
-      "version": "1.0.1"
+      "version": "1.1.0"
     },
     "Serilog.Sinks.Console": "2.1.0",
-    "Serilog.Sinks.Slack": "1.1.0"
+    "Serilog.Sinks.Slack": {
+      "target": "project"
+    }
   },
 
   "frameworks": {

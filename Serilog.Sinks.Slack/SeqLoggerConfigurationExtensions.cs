@@ -21,6 +21,8 @@ namespace Serilog.Sinks.Slack
         /// </summary>
         /// <param name="loggerSinkConfiguration">Instance of <see cref="LoggerSinkConfiguration"/> object.</param>
         /// <param name="webhookUrl">Slack team post URI.</param>
+        /// <param name="batchSizeLimit">The time to wait between checking for event batches.</param>
+        /// <param name="period">The time to wait between checking for event batches..</param>
         /// <param name="customChannel">Name of Slack channel to which message should be posted.</param>
         /// <param name="customUsername">User name that will be displayed as a name of the message sender.</param>
         /// <param name="customIcon">Icon that will be used as a sender avatar.</param>
@@ -29,6 +31,8 @@ namespace Serilog.Sinks.Slack
         public static LoggerConfiguration Slack(
             this LoggerSinkConfiguration loggerSinkConfiguration,
             string webhookUrl,
+            int? batchSizeLimit = null,
+            TimeSpan? period = null,
             string customChannel = null,
             string customUsername = null,
             string customIcon = null,
@@ -40,7 +44,8 @@ namespace Serilog.Sinks.Slack
             if (string.IsNullOrWhiteSpace(webhookUrl))
                 throw new ArgumentNullException(nameof(webhookUrl));
 
-            ILogEventSink sink = new SlackSink(webhookUrl, customChannel, customUsername, customIcon);
+
+            ILogEventSink sink = new SlackSink(webhookUrl, batchSizeLimit.GetValueOrDefault(50), period.GetValueOrDefault(TimeSpan.FromSeconds(5)), customChannel, customUsername, customIcon);
 
             return loggerSinkConfiguration.Sink(sink, restrictedToMinimumLevel);
         }
