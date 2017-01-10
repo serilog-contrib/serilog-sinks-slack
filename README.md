@@ -14,7 +14,8 @@
 <p align="center">
     <img src="https://img.shields.io/badge/.net-4.5-green.svg"></img>
     <img src="https://img.shields.io/badge/.net-4.6-green.svg"></img>
-    <img src="https://img.shields.io/badge/.net%20core-1.3-green.svg"></img>
+    <img src="https://img.shields.io/badge/.net%20standart-1.1-green.svg"></img>
+    <img src="https://img.shields.io/badge/.net%20standart-1.3-green.svg"></img>
 </p>
 
 ===

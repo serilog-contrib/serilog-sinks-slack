@@ -2,7 +2,6 @@
   "version": "1.2.0",
   "title": "Serilog.Sinks.Slack",
   "dependencies": {
-    "NETStandard.Library": "1.6.0",
     "Newtonsoft.Json": "9.0.1",
     "Serilog": "2.3.0",
     "Serilog.Sinks.PeriodicBatching": "2.1.0"
@@ -21,9 +20,28 @@
     }
   },
   "frameworks": {
-    "net45": {},
-    "net46": {},
-    "netstandard1.3": {}
+    "net45": {
+      "frameworkAssemblies": {
+        "System.Net.Http": "4.0.0.0"
+      }
+    },
+    "net46": {
+      "frameworkAssemblies": {
+        "System.Net.Http": "4.0.0.0"
+      }
+    },
+    "netstandard1.1": {
+      "dependencies": {
+        "System.Net.Http": "4.3.0",
+        "System.Runtime.InteropServices": "4.3.0"
+      }
+    },
+    "netstandard1.3": {
+      "dependencies": {
+        "System.Net.Http": "4.3.0",
+        "System.Runtime.InteropServices": "4.3.0"
+      }
+    }
   },
   "tools": {
     "dotnet-version": "1.1.0"
