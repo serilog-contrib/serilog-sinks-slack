@@ -8,10 +8,20 @@ namespace Serilog.Sinks.Slack.Sample
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-               .MinimumLevel.Verbose()
-               .WriteTo.Console(LogEventLevel.Debug)
-               .WriteTo.Slack("https://hooks.slack.com/services/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", 20, TimeSpan.FromSeconds(10), "#test", "Im a Ghost", ":ghost:")
-               .CreateLogger();
+                .MinimumLevel.Verbose()
+                .WriteTo.Console(LogEventLevel.Debug)
+                //.WriteTo.Slack("https://hooks.slack.com/services/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", 20, TimeSpan.FromSeconds(10), "#test", "Im a Ghost", ":ghost:")
+                .WriteTo.Slack(new SlackSinkOptions
+                {
+                    WebHookUrl = "https://hooks.slack.com/services/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",
+                    CustomChannel = "#test",
+                    BatchSizeLimit = 20,
+                    CustomIcon = ":ghost:",
+                    Period = TimeSpan.FromSeconds(10),
+                    ShowDefaultAttachments = false,
+                    ShowExceptionAttachments = true
+                })
+                .CreateLogger();
 
             Log.Logger.Verbose("1 Verbose");
             Log.Logger.Debug("2 Debug");
@@ -26,7 +36,7 @@ namespace Serilog.Sinks.Slack.Sample
             }
             Log.Logger.Information("5 Information");
             Log.Logger.Warning("6 Warning");
-            Log.Logger.Debug("7 Formatting {myProp}", new { myProp = "test" });
+            Log.Logger.Debug("7 Formatting {myProp}", new {myProp = "test"});
             Console.ReadKey();
         }
     }

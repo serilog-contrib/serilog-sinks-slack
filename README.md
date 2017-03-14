@@ -38,10 +38,29 @@ Minimal (using default WebHook integration settings)
 ```csharp
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Slack("https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    .CreateLogger();
 ```
 
 Custom channel, username or icon:
 ```csharp
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Slack("https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",  20, TimeSpan.FromSeconds(10), "#general" ,"Im a Ghost", ":ghost:")
+    .CreateLogger();
+```
+
+Advanced:
+```csharp
+ Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Verbose()
+    .WriteTo.Slack(new SlackSinkOptions()
+        {
+            WebHookUrl = "https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            CustomChannel = "#test",
+            BatchSizeLimit = 20,
+            CustomIcon = ":ghost:",
+            Period = TimeSpan.FromSeconds(10),
+            ShowDefaultAttachments = false,
+            ShowExceptionAttachments = true,
+        })
+        .CreateLogger();
 ```
