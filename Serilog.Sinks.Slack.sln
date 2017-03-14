@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.Slack", "Serilog.Sinks.Slack\Serilog.Sinks.Slack.xproj", "{343D6D6A-DCE5-4CA4-B68D-92F9B493C993}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{626813A1-D71D-43F8-ABCC-D3CBF0189A3E}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
@@ -13,7 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.Slack.Sample", "Serilog.Sinks.Slack.Sample\Serilog.Sinks.Slack.Sample.xproj", "{880962E8-5AC0-47FA-A0CA-FCBC8890D433}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.Slack", "Serilog.Sinks.Slack\Serilog.Sinks.Slack.xproj", "{518E39AE-AD6E-44DC-BECE-7C5F68A88C95}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Serilog.Sinks.Slack.Sample", "Serilog.Sinks.Slack.Sample\Serilog.Sinks.Slack.Sample.xproj", "{E2BDF0A2-DAE4-4930-84ED-A095FD7F349C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,14 +21,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{343D6D6A-DCE5-4CA4-B68D-92F9B493C993}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{343D6D6A-DCE5-4CA4-B68D-92F9B493C993}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{343D6D6A-DCE5-4CA4-B68D-92F9B493C993}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{343D6D6A-DCE5-4CA4-B68D-92F9B493C993}.Release|Any CPU.Build.0 = Release|Any CPU
-		{880962E8-5AC0-47FA-A0CA-FCBC8890D433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{880962E8-5AC0-47FA-A0CA-FCBC8890D433}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{880962E8-5AC0-47FA-A0CA-FCBC8890D433}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{880962E8-5AC0-47FA-A0CA-FCBC8890D433}.Release|Any CPU.Build.0 = Release|Any CPU
+		{518E39AE-AD6E-44DC-BECE-7C5F68A88C95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{518E39AE-AD6E-44DC-BECE-7C5F68A88C95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{518E39AE-AD6E-44DC-BECE-7C5F68A88C95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{518E39AE-AD6E-44DC-BECE-7C5F68A88C95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2BDF0A2-DAE4-4930-84ED-A095FD7F349C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2BDF0A2-DAE4-4930-84ED-A095FD7F349C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2BDF0A2-DAE4-4930-84ED-A095FD7F349C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2BDF0A2-DAE4-4930-84ED-A095FD7F349C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
