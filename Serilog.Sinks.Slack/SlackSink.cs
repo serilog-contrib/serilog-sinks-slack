@@ -95,8 +95,9 @@ namespace Serilog.Sinks.Slack
                     Fields = new List<Field>
                     {
                         new Field{Title = "Message", Value = logEvent.Exception.Message},
-                        new Field{Title = "Type", Value = "`" + logEvent.Exception.GetType().Name + "`"},
-                        new Field{Title = "Stack Trace", Value = "```" + logEvent.Exception.StackTrace + "```", Short = false}
+                        new Field{Title = "Type", Value = $"`{logEvent.Exception.GetType().Name}`"},
+                        new Field{Title = "Stack Trace", Value = $"```{logEvent.Exception.StackTrace}```", Short = false},
+                        new Field{Title = "Exception", Value = $"```{logEvent.Exception.ToString()}```", Short = false}
                     },
                     MrkdwnIn = new List<string> { "fields" }
                 };
