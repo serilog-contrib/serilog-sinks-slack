@@ -10,7 +10,7 @@ namespace Serilog.Sinks.Slack
         [JsonProperty("value")]
         public string Value { get; set; }
 
-        [JsonProperty("@short")]
+        [JsonProperty("short")]
         public bool? Short { get; set; }
     }
 }
