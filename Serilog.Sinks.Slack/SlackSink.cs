@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 using System.Linq;
+using Serilog.Formatting;
 
 namespace Serilog.Sinks.Slack
 {
@@ -22,15 +23,18 @@ namespace Serilog.Sinks.Slack
         };
 
         private readonly SlackSinkOptions _options;
+        private readonly ITextFormatter _textFormatter;
 
         /// <summary>
         /// Initializes new instance of <see cref="SlackSink"/>.
         /// </summary>
         /// <param name="options">Slack sink options object.</param>
-        public SlackSink(SlackSinkOptions options)
+        /// <param name="textFormatter">Formatter used to convert log events to text.</param>
+        public SlackSink(SlackSinkOptions options, ITextFormatter textFormatter)
             : base(options.BatchSizeLimit, options.Period)
         {
             _options = options;
+            _textFormatter = textFormatter;
         }
 
         /// <summary>
@@ -56,9 +60,12 @@ namespace Serilog.Sinks.Slack
 
         protected Message CreateMessage(LogEvent logEvent)
         {
+            var textWriter = new StringWriter();
+            _textFormatter.Format(logEvent, textWriter);
+
             return new Message
             {
-                Text = logEvent.RenderMessage(),
+                Text = textWriter.ToString(),
                 Channel = _options.CustomChannel,
                 UserName = _options.CustomUserName,
                 IconEmoji = _options.CustomIcon,
@@ -77,9 +84,36 @@ namespace Serilog.Sinks.Slack
                     Color = _options.AttachmentColors[logEvent.Level],
                     Fields = new List<Field>
                     {
-                        new Field{Title = "Level", Value = logEvent.Level.ToString()},
-                        new Field{Title = "Timestamp", Value = logEvent.Timestamp.ToString()}
+                        new Field{Title = "Level", Value = logEvent.Level.ToString(), Short = _options.DefaultAttachmentsShortFormat},
+                        new Field{Title = "Timestamp", Value = logEvent.Timestamp.ToString(), Short = _options.DefaultAttachmentsShortFormat}
                     }
+                };
+            }
+
+            if (_options.ShowPropertyAttachments)
+            {
+                var fields = new List<Field>();
+
+                var stringWriter = new StringWriter();
+                foreach (KeyValuePair<string, LogEventPropertyValue> property in logEvent.Properties)
+                {
+                    property.Value.Render(stringWriter);
+                    var field = new Field
+                    {
+                        Title = property.Key,
+                        Value = stringWriter.ToString(),
+                        Short = _options.PropertyAttachmentsShortFormat
+                    };
+                    fields.Add(field);
+
+                    stringWriter.GetStringBuilder().Clear();
+                }
+
+                yield return new Attachment
+                {
+                    Fallback = $"[{logEvent.Level}]{logEvent.RenderMessage()}",
+                    Color = _options.AttachmentColors[logEvent.Level],
+                    Fields = fields
                 };
             }
 

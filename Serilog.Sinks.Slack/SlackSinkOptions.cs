@@ -20,6 +20,21 @@ namespace Serilog.Sinks.Slack
         public bool ShowDefaultAttachments { get; set; } = true;
 
         /// <summary>
+        ///  Use the short format for attachments of all logs without exceptions. Default is true.
+        /// </summary>
+        public bool DefaultAttachmentsShortFormat { get; set; } = true;
+
+        /// <summary>
+        /// Show properties from the log context in the attachments. Default is true.
+        /// </summary>
+        public bool ShowPropertyAttachments { get; set; } = true;
+
+        /// <summary>
+        /// Use the short format for properties from the log context in the attachments. Default is true.
+        /// </summary>
+        public bool PropertyAttachmentsShortFormat { get; set; } = true;
+
+        /// <summary>
         /// Show attachments for exceptions, with the exception details. Default is true.
         /// </summary>
         public bool ShowExceptionAttachments { get; set; } = true;
