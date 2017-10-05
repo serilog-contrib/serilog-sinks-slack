@@ -76,5 +76,10 @@ namespace Serilog.Sinks.Slack
         /// Optional: A custom icon. Default is whatever is set on the integration page.
         /// </summary>
         public string CustomIcon { get; set; }
+
+        /// <summary>
+        /// Optional: A minimum log event level that will be sent to slack.
+        /// </summary>
+        public LogEventLevel MinimumLogEventLevel { get; set; }
     }
 }
