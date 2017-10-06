@@ -46,6 +46,7 @@ namespace Serilog.Sinks.Slack
         {
             foreach (var logEvent in events)
             {
+                if (logEvent.Level < _options.MinimumLogEventLevel) continue;
                 var message = CreateMessage(logEvent);
                 var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                 await Client.PostAsync(_options.WebHookUrl, new StringContent(json));
