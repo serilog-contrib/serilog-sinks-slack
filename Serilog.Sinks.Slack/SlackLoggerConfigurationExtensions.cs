@@ -33,6 +33,7 @@ namespace Serilog.Sinks.Slack
         /// <param name="defaultAttachmentsShortFormat">Use the short format for attachments of all logs without exceptions. Default is true.</param>
         /// <param name="showPropertyAttachments">Show properties from the context in the attachments. Default is true.</param>
         /// <param name="propertyAttachmentsShortFormat">Use the short format for properties from the log context in the attachments. Default is true.</param>
+        /// <param name="showExceptionAttachments">Show attachments containing exception details. Default is true.</param>
         /// <param name="restrictedToMinimumLevel"><see cref="LogEventLevel"/> value that specifies minimum logging level that will be allowed to be logged.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink. The default is "{Message}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
@@ -49,6 +50,7 @@ namespace Serilog.Sinks.Slack
             bool defaultAttachmentsShortFormat = true,
             bool showPropertyAttachments = true,
             bool propertyAttachmentsShortFormat = true,
+            bool showExceptionAttachments = true,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider formatProvider = null)
@@ -65,8 +67,9 @@ namespace Serilog.Sinks.Slack
                 customIcon,
                 showDefaultAttachments,
                 defaultAttachmentsShortFormat,
-                showPropertyAttachments ,
-                propertyAttachmentsShortFormat, 
+                showPropertyAttachments,
+                propertyAttachmentsShortFormat,
+                showExceptionAttachments,
                 restrictedToMinimumLevel);
         }
 
@@ -94,6 +97,7 @@ namespace Serilog.Sinks.Slack
         /// <param name="defaultAttachmentsShortFormat">Use the short format for attachments of all logs without exceptions. Default is true.</param>
         /// <param name="showPropertyAttachments">Show properties from the context in the attachments. Default is true.</param>
         /// <param name="propertyAttachmentsShortFormat">Use the short format for properties from the log context in the attachments. Default is true.</param>
+        /// <param name="showExceptionAttachments">Show attachments containing exception details. Default is true.</param>
         /// <param name="restrictedToMinimumLevel"><see cref="LogEventLevel"/> value that specifies minimum logging level that will be allowed to be logged.</param>
         /// <returns>Instance of <see cref="LoggerConfiguration"/> object.</returns>
         public static LoggerConfiguration Slack(
@@ -109,6 +113,7 @@ namespace Serilog.Sinks.Slack
             bool defaultAttachmentsShortFormat = true,
             bool showPropertyAttachments = true,
             bool propertyAttachmentsShortFormat = true,
+            bool showExceptionAttachments = true,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
         {
             var slackSinkOptions = new SlackSinkOptions
@@ -121,6 +126,7 @@ namespace Serilog.Sinks.Slack
                 DefaultAttachmentsShortFormat = defaultAttachmentsShortFormat,
                 ShowPropertyAttachments = showPropertyAttachments,
                 PropertyAttachmentsShortFormat = propertyAttachmentsShortFormat,
+                ShowExceptionAttachments = showExceptionAttachments
             };
 
             if (batchSizeLimit.HasValue)
