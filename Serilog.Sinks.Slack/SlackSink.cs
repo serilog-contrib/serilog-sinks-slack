@@ -24,8 +24,8 @@ namespace Serilog.Sinks.Slack
         /// </summary>
         private enum SpecialProperties
         {
-            Channel,
-            UserName,
+            CustomChannel,
+            CustomUserName,
             CustomIcon
         }
 
@@ -80,8 +80,8 @@ namespace Serilog.Sinks.Slack
             return new Message
             {
                 Text = textWriter.ToString(),
-                Channel = GetPropertyFromException(logEvent, SpecialProperties.Channel, _options.CustomChannel),
-                UserName = GetPropertyFromException(logEvent, SpecialProperties.UserName, _options.CustomUserName),
+                Channel = GetPropertyFromException(logEvent, SpecialProperties.CustomChannel, _options.CustomChannel),
+                UserName = GetPropertyFromException(logEvent, SpecialProperties.CustomUserName, _options.CustomUserName),
                 IconEmoji = GetPropertyFromException(logEvent, SpecialProperties.CustomIcon, _options.CustomIcon),
                 Attachments = CreateAttachments(logEvent).ToList()
             };
