@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -16,6 +18,16 @@ namespace Serilog.Sinks.Slack
     public class SlackSink : PeriodicBatchingSink
     {
         private static readonly HttpClient Client = new HttpClient();
+
+        /// <summary>
+        /// These properties can be used to override options at a message level and will not appear as attachments
+        /// </summary>
+        private enum SpecialProperties
+        {
+            Channel,
+            UserName,
+            CustomIcon
+        }
 
         private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
         {
@@ -55,8 +67,9 @@ namespace Serilog.Sinks.Slack
 
         protected override void Dispose(bool disposing)
         {
-            Client.Dispose();
+            // Need to call base dispose first to flush last of messages *before* disposing of client.
             base.Dispose(disposing);
+            Client.Dispose();
         }
 
         protected Message CreateMessage(LogEvent logEvent)
@@ -67,11 +80,18 @@ namespace Serilog.Sinks.Slack
             return new Message
             {
                 Text = textWriter.ToString(),
-                Channel = _options.CustomChannel,
-                UserName = _options.CustomUserName,
-                IconEmoji = _options.CustomIcon,
+                Channel = GetPropertyFromException(logEvent, SpecialProperties.Channel, _options.CustomChannel),
+                UserName = GetPropertyFromException(logEvent, SpecialProperties.UserName, _options.CustomUserName),
+                IconEmoji = GetPropertyFromException(logEvent, SpecialProperties.CustomIcon, _options.CustomIcon),
                 Attachments = CreateAttachments(logEvent).ToList()
             };
+        }
+
+        private static string GetPropertyFromException(LogEvent logEvent, SpecialProperties specialProperty, string defaultValue)
+        {
+            return logEvent.Properties.TryGetValue(Enum.GetName(typeof(SpecialProperties), specialProperty), out var logEventPropertyValue) 
+                ? logEventPropertyValue.ToString("l", null) 
+                : defaultValue;
         }
 
         protected IEnumerable<Attachment> CreateAttachments(LogEvent logEvent)
@@ -98,6 +118,10 @@ namespace Serilog.Sinks.Slack
                 var stringWriter = new StringWriter();
                 foreach (KeyValuePair<string, LogEventPropertyValue> property in logEvent.Properties)
                 {
+                    if (Enum.GetNames(typeof(SpecialProperties)).Contains(property.Key))
+                    {
+                        continue;
+                    }
                     property.Value.Render(stringWriter);
                     var field = new Field
                     {
