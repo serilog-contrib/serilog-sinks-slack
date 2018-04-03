@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -20,9 +19,10 @@ namespace Serilog.Sinks.Slack
         private static readonly HttpClient Client = new HttpClient();
 
         /// <summary>
-        /// These properties can be used to override options at a message level and will not appear as attachments
+        /// These properties can be used to override options at a message level.
+        /// They will not appear as attachments.
         /// </summary>
-        private enum SpecialProperties
+        private enum OverrideableProperties
         {
             CustomChannel,
             CustomUserName,
@@ -80,16 +80,17 @@ namespace Serilog.Sinks.Slack
             return new Message
             {
                 Text = textWriter.ToString(),
-                Channel = GetPropertyFromException(logEvent, SpecialProperties.CustomChannel, _options.CustomChannel),
-                UserName = GetPropertyFromException(logEvent, SpecialProperties.CustomUserName, _options.CustomUserName),
-                IconEmoji = GetPropertyFromException(logEvent, SpecialProperties.CustomIcon, _options.CustomIcon),
+                Channel = GetPropertyFromException(logEvent, OverrideableProperties.CustomChannel, _options.CustomChannel),
+                UserName = GetPropertyFromException(logEvent, OverrideableProperties.CustomUserName, _options.CustomUserName),
+                IconEmoji = GetPropertyFromException(logEvent, OverrideableProperties.CustomIcon, _options.CustomIcon),
                 Attachments = CreateAttachments(logEvent).ToList()
             };
         }
 
-        private static string GetPropertyFromException(LogEvent logEvent, SpecialProperties specialProperty, string defaultValue)
+        private static string GetPropertyFromException(LogEvent logEvent, OverrideableProperties overrideableProperty, string defaultValue)
         {
-            return logEvent.Properties.TryGetValue(Enum.GetName(typeof(SpecialProperties), specialProperty), out var logEventPropertyValue) 
+            var overrideablePropertyName = Enum.GetName(typeof(OverrideableProperties), overrideableProperty);
+            return logEvent.Properties.TryGetValue(overrideablePropertyName, out var logEventPropertyValue) 
                 ? logEventPropertyValue.ToString("l", null) 
                 : defaultValue;
         }
@@ -114,14 +115,11 @@ namespace Serilog.Sinks.Slack
             if (_options.ShowPropertyAttachments)
             {
                 var fields = new List<Field>();
+                var overrideablePropertyNames = Enum.GetNames(typeof(OverrideableProperties));
 
                 var stringWriter = new StringWriter();
-                foreach (KeyValuePair<string, LogEventPropertyValue> property in logEvent.Properties)
+                foreach (var property in logEvent.Properties.Where(kvp=>!overrideablePropertyNames.Contains(kvp.Key)))
                 {
-                    if (Enum.GetNames(typeof(SpecialProperties)).Contains(property.Key))
-                    {
-                        continue;
-                    }
                     property.Value.Render(stringWriter);
                     var field = new Field
                     {
