@@ -50,4 +50,10 @@
     <DotNetCliToolReference Include="dotnet-version" Version="1.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Serilog.Sinks.Slack.nuspec">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
