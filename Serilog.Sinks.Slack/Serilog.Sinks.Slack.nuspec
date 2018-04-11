@@ -9,6 +9,6 @@
     <description>A deployment package created from files on disk.</description>
   </metadata>
   <files>
-    <file src="lib\netstandard1.1\Serilog.Sinks.Slack.dll" target="lib\netstandard1.1\Serilog.Sinks.Slack.dll" />
+    <file src="Serilog.Sinks.Slack.dll" target="lib\netstandard1.1\Serilog.Sinks.Slack.dll" />
   </files>
 </package>
