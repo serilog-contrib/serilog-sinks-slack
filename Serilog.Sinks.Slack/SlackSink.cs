@@ -16,7 +16,7 @@ namespace Serilog.Sinks.Slack
     /// </summary>
     public class SlackSink : PeriodicBatchingSink
     {
-        private static readonly HttpClient Client = new HttpClient();
+        private readonly HttpClient Client = new HttpClient();
 
         private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
         {
@@ -56,8 +56,8 @@ namespace Serilog.Sinks.Slack
 
         protected override void Dispose(bool disposing)
         {
-            Client.Dispose();
             base.Dispose(disposing);
+            Client.Dispose();
         }
 
         protected Message CreateMessage(LogEvent logEvent)
