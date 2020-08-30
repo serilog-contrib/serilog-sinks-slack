@@ -1,11 +1,12 @@
 ﻿using System;
 using Serilog.Events;
+using Serilog.Sinks.Slack.Models;
 
 namespace Serilog.Sinks.Slack.Sample
 {
-    public class Program
+    class Program
     {
-        public static void Main(string[] args)
+        public static void Main()
         {
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
@@ -36,7 +37,7 @@ namespace Serilog.Sinks.Slack.Sample
             }
             Log.Logger.Information("5 Information");
             Log.Logger.Warning("6 Warning");
-            Log.Logger.Debug("7 Formatting {myProp}", new {myProp = "test"});
+            Log.Logger.Debug("7 Formatting {myProp}", new { myProp = "test" });
             Console.ReadKey();
         }
     }

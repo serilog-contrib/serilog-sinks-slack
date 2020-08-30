@@ -1,8 +1,8 @@
-﻿using Serilog.Events;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Serilog.Events;
 
-namespace Serilog.Sinks.Slack
+namespace Serilog.Sinks.Slack.Models
 {
     /// <summary>
     /// Container for all Slack sink configuration.

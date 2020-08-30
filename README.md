@@ -4,9 +4,6 @@
     <a href="https://ci.appveyor.com/project/mgibas/serilog-sinks-slack/branch/master">
         <img src="https://ci.appveyor.com/api/projects/status/hgfjns15mkqih2lx/branch/master?svg=true"></img>
     </a>
-    <a href="https://www.gitcheese.com/donate/users/530319/repos/53866227">
-        <img src="https://s3.amazonaws.com/gitcheese-ui-master/images/badge.svg"></img>
-    </a>
     <a href="https://www.nuget.org/packages/Serilog.Sinks.Slack/">
         <img src="https://img.shields.io/nuget/v/Serilog.Sinks.Slack.svg?style=flat-square"></img>
     </a>
@@ -14,8 +11,9 @@
 <p align="center">
     <img src="https://img.shields.io/badge/.net-4.5-green.svg"></img>
     <img src="https://img.shields.io/badge/.net-4.6-green.svg"></img>
-    <img src="https://img.shields.io/badge/.net%20standart-1.1-green.svg"></img>
-    <img src="https://img.shields.io/badge/.net%20standart-1.3-green.svg"></img>
+    <img src="https://img.shields.io/badge/.net%20standard-1.1-green.svg"></img>
+    <img src="https://img.shields.io/badge/.net%20standard-1.3-green.svg"></img>
+	<img src="https://img.shields.io/badge/.net%20standard-2.0-green.svg"></img>
 </p>
 
 Simple and beautifull Serilog Slack sink :)
