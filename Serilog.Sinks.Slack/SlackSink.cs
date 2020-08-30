@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog.Events;
-using Serilog.Sinks.PeriodicBatching;
-using System.Linq;
 using Serilog.Formatting;
+using Serilog.Sinks.PeriodicBatching;
+using Serilog.Sinks.Slack.Models;
 
 namespace Serilog.Sinks.Slack
 {

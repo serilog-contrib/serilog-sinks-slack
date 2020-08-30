@@ -3,6 +3,7 @@ using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Formatting.Display;
+using Serilog.Sinks.Slack.Models;
 
 namespace Serilog.Sinks.Slack
 {
@@ -58,8 +59,8 @@ namespace Serilog.Sinks.Slack
 
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
             return loggerSinkConfiguration.Slack(
-                webhookUrl, 
-                formatter, 
+                webhookUrl,
+                formatter,
                 batchSizeLimit,
                 period,
                 customChannel,
