@@ -16,7 +16,7 @@
 	<img src="https://img.shields.io/badge/.net%20standard-2.0-green.svg"></img>
 </p>
 
-Simple and beautifull Serilog Slack sink :)
+Simple and beautiful Serilog Slack sink :)
 
 NuGet
 ====

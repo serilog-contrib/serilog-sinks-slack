@@ -130,10 +130,10 @@ namespace Serilog.Sinks.Slack
                     Color = _options.AttachmentColors[LogEventLevel.Fatal],
                     Fields = new List<Field>
                     {
-                        new Field{Title = "Message", Value = logEvent.Exception.Message},
-                        new Field{Title = "Type", Value = $"`{logEvent.Exception.GetType().Name}`"},
-                        new Field{Title = "Stack Trace", Value = $"```{logEvent.Exception.StackTrace}```", Short = false},
-                        new Field{Title = "Exception", Value = $"```{logEvent.Exception.ToString()}```", Short = false}
+                        new Field { Title = "Message", Value = logEvent.Exception.Message },
+                        new Field { Title = "Type", Value = $"`{logEvent.Exception.GetType().Name}`" },
+                        new Field { Title = "Exception", Value = $"```{logEvent.Exception}```", Short = false },
+                        new Field { Title = "Stack Trace", Value = $"```{logEvent.Exception.StackTrace}```", Short = false }
                     },
                     MrkdwnIn = new List<string> { "fields" }
                 };
