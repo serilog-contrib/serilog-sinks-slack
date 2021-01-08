@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Sinks.PeriodicBatching;
+using Serilog.Sinks.Slack.Helpers;
 using Serilog.Sinks.Slack.Models;
 
 namespace Serilog.Sinks.Slack
@@ -131,9 +132,9 @@ namespace Serilog.Sinks.Slack
                     Fields = new List<Field>
                     {
                         new Field { Title = "Message", Value = logEvent.Exception.Message },
-                        new Field { Title = "Type", Value = $"`{logEvent.Exception.GetType().Name}`" },
-                        new Field { Title = "Exception", Value = $"```{logEvent.Exception}```", Short = false },
-                        new Field { Title = "Stack Trace", Value = $"```{logEvent.Exception.StackTrace}```", Short = false }
+                        new Field { Title = "Type", Value = $"`{logEvent.Exception.GetFlattenedType()}`" },
+                        new Field { Title = "Stack Trace", Value = $"```{logEvent.Exception.GetFlattenedStackTrace()}```", Short = false },
+                        new Field { Title = "Exception", Value = $"```{logEvent.Exception.GetFlattenedMessage()}```", Short = false }
                     },
                     MrkdwnIn = new List<string> { "fields" }
                 };
