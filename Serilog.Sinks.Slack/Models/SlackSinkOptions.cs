@@ -81,5 +81,16 @@ namespace Serilog.Sinks.Slack.Models
         /// Optional: A minimum log event level that will be sent to slack.
         /// </summary>
         public LogEventLevel MinimumLogEventLevel { get; set; }
+
+        /// <summary>
+        /// Optional: A list of properties (including exception properties) that are included in the messages.
+        /// If this property is set along with <see cref="PropertyDenyList"/>, this takes precedence.
+        /// </summary>
+        public List<string> PropertyAllowList { get; set; }
+
+        /// <summary>
+        /// Optional: A list of properties (including exception properties) that are excluded in the messages.
+        /// </summary>
+        public List<string> PropertyDenyList { get; set; }
     }
 }

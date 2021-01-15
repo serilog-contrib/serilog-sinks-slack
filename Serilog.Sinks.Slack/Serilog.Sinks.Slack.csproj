@@ -4,8 +4,7 @@
     <TargetFrameworks>netstandard1.1;netstandard1.3;netstandard2.0;net45;net46</TargetFrameworks>
     <Authors>mgibas,Sergey Kuznetsov,phnx47,TrapperHell</Authors>
     <Description>Serilog sink for Slack</Description>
-    <VersionPrefix>2.0.0</VersionPrefix>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <PackageVersion>$(Version)</PackageVersion>
     <PackageProjectUrl>https://github.com/mgibas/serilog-sinks-slack</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

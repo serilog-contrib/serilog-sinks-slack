@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Formatting;
@@ -38,6 +39,8 @@ namespace Serilog.Sinks.Slack
         /// <param name="restrictedToMinimumLevel"><see cref="LogEventLevel"/> value that specifies minimum logging level that will be allowed to be logged.</param>
         /// <param name="outputTemplate">A message template describing the format used to write to the sink. The default is "{Message}".</param>
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
+        /// <param name="propertyAllowList">If specified, only properties that match (case-insensitive) the name in the list are logged. Takes precedence over <see cref="SlackSinkOptions.PropertyDenyList"/></param>
+        /// <param name="propertyDenyList">If specified, only properties that are not in this list are logged.</param>
         /// <returns>Instance of <see cref="LoggerConfiguration"/> object.</returns>
         public static LoggerConfiguration Slack(
             this LoggerSinkConfiguration loggerSinkConfiguration,
@@ -54,7 +57,9 @@ namespace Serilog.Sinks.Slack
             bool showExceptionAttachments = true,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             string outputTemplate = DefaultOutputTemplate,
-            IFormatProvider formatProvider = null)
+            IFormatProvider formatProvider = null,
+            List<string> propertyAllowList = null,
+            List<string> propertyDenyList = null)
         {
 
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
@@ -71,7 +76,9 @@ namespace Serilog.Sinks.Slack
                 showPropertyAttachments,
                 propertyAttachmentsShortFormat,
                 showExceptionAttachments,
-                restrictedToMinimumLevel);
+                restrictedToMinimumLevel,
+                propertyAllowList,
+                propertyDenyList);
         }
 
         /// <summary>
@@ -100,6 +107,8 @@ namespace Serilog.Sinks.Slack
         /// <param name="propertyAttachmentsShortFormat">Use the short format for properties from the log context in the attachments. Default is true.</param>
         /// <param name="showExceptionAttachments">Show attachments containing exception details. Default is true.</param>
         /// <param name="restrictedToMinimumLevel"><see cref="LogEventLevel"/> value that specifies minimum logging level that will be allowed to be logged.</param>
+        /// <param name="propertyAllowList">If specified, only properties that match (case-insensitive) the name in the list are logged. Takes precedence over <see cref="SlackSinkOptions.PropertyDenyList"/></param>
+        /// <param name="propertyDenyList">If specified, only properties that are not in this list are logged.</param>
         /// <returns>Instance of <see cref="LoggerConfiguration"/> object.</returns>
         public static LoggerConfiguration Slack(
             this LoggerSinkConfiguration loggerSinkConfiguration,
@@ -115,7 +124,9 @@ namespace Serilog.Sinks.Slack
             bool showPropertyAttachments = true,
             bool propertyAttachmentsShortFormat = true,
             bool showExceptionAttachments = true,
-            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum)
+            LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
+            List<string> propertyAllowList = null,
+            List<string> propertyDenyList = null)
         {
             var slackSinkOptions = new SlackSinkOptions
             {
@@ -127,6 +138,8 @@ namespace Serilog.Sinks.Slack
                 DefaultAttachmentsShortFormat = defaultAttachmentsShortFormat,
                 ShowPropertyAttachments = showPropertyAttachments,
                 PropertyAttachmentsShortFormat = propertyAttachmentsShortFormat,
+                PropertyAllowList = propertyAllowList,
+                PropertyDenyList = propertyDenyList,
                 ShowExceptionAttachments = showExceptionAttachments
             };
 

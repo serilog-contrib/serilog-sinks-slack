@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -19,7 +20,7 @@ namespace Serilog.Sinks.Slack
     {
         private readonly HttpClient Client = new HttpClient();
 
-        private static readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore
         };
@@ -81,16 +82,18 @@ namespace Serilog.Sinks.Slack
             // If default attachments are enabled.
             if (_options.ShowDefaultAttachments)
             {
-                yield return new Attachment
+                var attachment = new Attachment
                 {
                     Fallback = $"[{logEvent.Level}]{logEvent.RenderMessage()}",
                     Color = _options.AttachmentColors[logEvent.Level],
-                    Fields = new List<Field>
-                    {
-                        new Field{Title = "Level", Value = logEvent.Level.ToString(), Short = _options.DefaultAttachmentsShortFormat},
-                        new Field{Title = "Timestamp", Value = logEvent.Timestamp.ToString(), Short = _options.DefaultAttachmentsShortFormat}
-                    }
+                    Fields = new List<Field>()
                 };
+
+                AddAttachmentField(ref attachment, new Field { Title = "Level", Value = logEvent.Level.ToString(), Short = _options.DefaultAttachmentsShortFormat });
+                AddAttachmentField(ref attachment, new Field { Title = "Timestamp", Value = logEvent.Timestamp.ToString(), Short = _options.DefaultAttachmentsShortFormat });
+
+                if (attachment.Fields.Any())
+                    yield return attachment;
             }
 
             if (_options.ShowPropertyAttachments)
@@ -100,6 +103,11 @@ namespace Serilog.Sinks.Slack
                 var stringWriter = new StringWriter();
                 foreach (KeyValuePair<string, LogEventPropertyValue> property in logEvent.Properties)
                 {
+                    if (!_options.PropertyAllowList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
+                        continue;
+                    else if (_options.PropertyDenyList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
+                        continue;
+
                     property.Value.Render(stringWriter);
                     var field = new Field
                     {
@@ -112,33 +120,62 @@ namespace Serilog.Sinks.Slack
                     stringWriter.GetStringBuilder().Clear();
                 }
 
-                yield return new Attachment
+                if (fields.Any())
                 {
-                    Fallback = $"[{logEvent.Level}]{logEvent.RenderMessage()}",
-                    Color = _options.AttachmentColors[logEvent.Level],
-                    Fields = fields
-                };
+                    yield return new Attachment
+                    {
+                        Fallback = $"[{logEvent.Level}]{logEvent.RenderMessage()}",
+                        Color = _options.AttachmentColors[logEvent.Level],
+                        Fields = fields
+                    };
+                }
             }
 
             // If there is an exception in the current event,
             // and exception attachments are enabled.
             if (logEvent.Exception != null && _options.ShowExceptionAttachments)
             {
-                yield return new Attachment
+                var attachment = new Attachment
                 {
                     Title = "Exception",
-                    Fallback = $"Exception: {logEvent.Exception.Message} \n {logEvent.Exception.StackTrace}",
+                    Fallback = $"Exception: {logEvent.Exception.Message} \n {ShortenMessage(logEvent.Exception.StackTrace, 1000)}",
                     Color = _options.AttachmentColors[LogEventLevel.Fatal],
-                    Fields = new List<Field>
-                    {
-                        new Field { Title = "Message", Value = logEvent.Exception.Message },
-                        new Field { Title = "Type", Value = $"`{logEvent.Exception.GetFlattenedType()}`" },
-                        new Field { Title = "Stack Trace", Value = $"```{logEvent.Exception.GetFlattenedStackTrace()}```", Short = false },
-                        new Field { Title = "Exception", Value = $"```{logEvent.Exception.GetFlattenedMessage()}```", Short = false }
-                    },
+                    Fields = new List<Field>(),
                     MrkdwnIn = new List<string> { "fields" }
                 };
+
+                AddAttachmentField(ref attachment, new Field { Title = "Message", Value = logEvent.Exception.Message });
+                AddAttachmentField(ref attachment, new Field { Title = "Type", Value = $"`{logEvent.Exception.GetFlattenedType()}`" });
+
+                AddAttachmentField(ref attachment, new Field { Title = "Exception", Value = $"```{ShortenMessage(logEvent.Exception.GetFlattenedMessage(), 1000)}```", Short = false });
+
+                if (!string.IsNullOrEmpty(logEvent.Exception.StackTrace))
+                    AddAttachmentField(ref attachment, new Field { Title = "Stack Trace", Value = $"```{ShortenMessage(logEvent.Exception.GetFlattenedStackTrace(), 1000)}```", Short = false });
+
+                if (attachment.Fields.Any())
+                    yield return attachment;
             }
+        }
+
+        private void AddAttachmentField(ref Attachment attachment, Field field)
+        {
+            if (!_options.PropertyAllowList?.Any(x => x.Equals(field.Title, StringComparison.OrdinalIgnoreCase)) ?? false)
+                return;
+            else if (_options.PropertyDenyList?.Any(x => x.Equals(field.Title, StringComparison.OrdinalIgnoreCase)) ?? false)
+                return;
+
+            attachment.Fields.Add(field);
+        }
+
+        private static string ShortenMessage(string message, int maxLength)
+        {
+            if (string.IsNullOrEmpty(message))
+                return message;
+
+            if (message.Length < maxLength)
+                return message;
+
+            return message.Substring(0, maxLength - 3) + "...";
         }
     }
 }
