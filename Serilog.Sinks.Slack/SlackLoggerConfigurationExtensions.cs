@@ -41,6 +41,7 @@ namespace Serilog.Sinks.Slack
         /// <param name="formatProvider">Supplies culture-specific formatting information, or null.</param>
         /// <param name="propertyAllowList">If specified, only properties that match (case-insensitive) the name in the list are logged. Takes precedence over <see cref="SlackSinkOptions.PropertyDenyList"/></param>
         /// <param name="propertyDenyList">If specified, only properties that are not in this list are logged.</param>
+        /// <param name="timestampFormat">The <see href="https://docs.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings"> date and time format</see> for timestamps in messages.</param>
         /// <returns>Instance of <see cref="LoggerConfiguration"/> object.</returns>
         public static LoggerConfiguration Slack(
             this LoggerSinkConfiguration loggerSinkConfiguration,
@@ -59,7 +60,8 @@ namespace Serilog.Sinks.Slack
             string outputTemplate = DefaultOutputTemplate,
             IFormatProvider formatProvider = null,
             List<string> propertyAllowList = null,
-            List<string> propertyDenyList = null)
+            List<string> propertyDenyList = null,
+            string timestampFormat = null)
         {
 
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
@@ -78,7 +80,8 @@ namespace Serilog.Sinks.Slack
                 showExceptionAttachments,
                 restrictedToMinimumLevel,
                 propertyAllowList,
-                propertyDenyList);
+                propertyDenyList,
+                timestampFormat);
         }
 
         /// <summary>
