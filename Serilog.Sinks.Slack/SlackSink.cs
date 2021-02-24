@@ -90,7 +90,7 @@ namespace Serilog.Sinks.Slack
                 };
 
                 AddAttachmentField(ref attachment, new Field { Title = "Level", Value = logEvent.Level.ToString(), Short = _options.DefaultAttachmentsShortFormat });
-                AddAttachmentField(ref attachment, new Field { Title = "Timestamp", Value = logEvent.Timestamp.ToString(), Short = _options.DefaultAttachmentsShortFormat });
+                AddAttachmentField(ref attachment, new Field { Title = "Timestamp", Value = logEvent.Timestamp.ToString(_options.TimestampFormat), Short = _options.DefaultAttachmentsShortFormat });
 
                 if (attachment.Fields.Any())
                     yield return attachment;

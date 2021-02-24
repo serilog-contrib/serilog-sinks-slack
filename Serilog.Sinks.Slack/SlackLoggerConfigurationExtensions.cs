@@ -109,6 +109,7 @@ namespace Serilog.Sinks.Slack
         /// <param name="restrictedToMinimumLevel"><see cref="LogEventLevel"/> value that specifies minimum logging level that will be allowed to be logged.</param>
         /// <param name="propertyAllowList">If specified, only properties that match (case-insensitive) the name in the list are logged. Takes precedence over <see cref="SlackSinkOptions.PropertyDenyList"/></param>
         /// <param name="propertyDenyList">If specified, only properties that are not in this list are logged.</param>
+        /// <param name="timestampFormat">The <see href="https://docs.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings"> date and time format</see> for timestamps in messages.</param>
         /// <returns>Instance of <see cref="LoggerConfiguration"/> object.</returns>
         public static LoggerConfiguration Slack(
             this LoggerSinkConfiguration loggerSinkConfiguration,
@@ -126,7 +127,8 @@ namespace Serilog.Sinks.Slack
             bool showExceptionAttachments = true,
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             List<string> propertyAllowList = null,
-            List<string> propertyDenyList = null)
+            List<string> propertyDenyList = null,
+            string timestampFormat = null)
         {
             var slackSinkOptions = new SlackSinkOptions
             {
@@ -140,7 +142,8 @@ namespace Serilog.Sinks.Slack
                 PropertyAttachmentsShortFormat = propertyAttachmentsShortFormat,
                 PropertyAllowList = propertyAllowList,
                 PropertyDenyList = propertyDenyList,
-                ShowExceptionAttachments = showExceptionAttachments
+                ShowExceptionAttachments = showExceptionAttachments,
+                TimestampFormat = timestampFormat
             };
 
             if (batchSizeLimit.HasValue)

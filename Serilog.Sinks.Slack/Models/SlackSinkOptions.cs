@@ -92,5 +92,11 @@ namespace Serilog.Sinks.Slack.Models
         /// Optional: A list of properties (including exception properties) that are excluded in the messages.
         /// </summary>
         public List<string> PropertyDenyList { get; set; }
+
+        /// <summary>
+        /// Optional: The <see href="https://docs.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings"> date and time format</see> used for timestamps in the messages.
+        /// Default is derived from the current culture. 
+        /// </summary>
+        public string TimestampFormat { get; set; }
     }
 }

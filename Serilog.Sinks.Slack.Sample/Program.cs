@@ -20,7 +20,8 @@ namespace Serilog.Sinks.Slack.Sample
                     CustomIcon = ":ghost:",
                     Period = TimeSpan.FromSeconds(10),
                     ShowDefaultAttachments = false,
-                    ShowExceptionAttachments = true
+                    ShowExceptionAttachments = true,
+                    TimestampFormat = "o"
                 })
                 .CreateLogger();
 
