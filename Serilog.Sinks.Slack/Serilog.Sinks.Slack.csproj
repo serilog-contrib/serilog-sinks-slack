@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;netstandard1.3;netstandard2.0;net45;net46</TargetFrameworks>
-    <Authors>mgibas,Sergey Kuznetsov,phnx47,TrapperHell</Authors>
+    <Authors>mgibas,phnx47,TrapperHell</Authors>
     <Description>Serilog sink for Slack</Description>
     <Version>2.0.3</Version>
     <PackageVersion>$(Version)</PackageVersion>
