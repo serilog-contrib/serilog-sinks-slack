@@ -6,9 +6,9 @@
     <Description>Serilog sink for Slack</Description>
     <Version>2.0.1</Version>
     <PackageVersion>$(Version)</PackageVersion>
-    <PackageProjectUrl>https://github.com/mgibas/serilog-sinks-slack</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/serilog-contrib/serilog-sinks-slack</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/mgibas/serilog-sinks-slack</RepositoryUrl>
+    <RepositoryUrl>https://github.com/serilog-contrib/serilog-sinks-slack</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>serilog sink slack</PackageTags>
   </PropertyGroup>
