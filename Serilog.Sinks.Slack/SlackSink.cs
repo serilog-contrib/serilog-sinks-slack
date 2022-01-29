@@ -34,7 +34,7 @@ namespace Serilog.Sinks.Slack
         /// <param name="options">Slack sink options object.</param>
         /// <param name="textFormatter">Formatter used to convert log events to text.</param>
         public SlackSink(SlackSinkOptions options, ITextFormatter textFormatter)
-            : base(options.BatchSizeLimit, options.Period)
+            : base(options.BatchSizeLimit, options.Period, options.QueueLimit ?? PeriodicBatchingSink.NoQueueLimit)
         {
             _options = options;
             _textFormatter = textFormatter;

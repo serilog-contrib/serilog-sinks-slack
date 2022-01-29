@@ -26,8 +26,9 @@ namespace Serilog.Sinks.Slack
         /// </summary>
         /// <param name="loggerSinkConfiguration">Instance of <see cref="LoggerSinkConfiguration"/> object.</param>
         /// <param name="webhookUrl">Slack team post URI.</param>
-        /// <param name="batchSizeLimit">The time to wait between checking for event batches.</param>
-        /// <param name="period">The time to wait between checking for event batches..</param>
+        /// <param name="batchSizeLimit">The maximum number of events to include in a single batch.</param>
+        /// <param name="queueLimit">The maximum number of events to hold in the sink's internal queue, or <c>null</c> for an unbounded queue. The default is <c>100000</c>.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="customChannel">Name of Slack channel to which message should be posted.</param>
         /// <param name="customUsername">User name that will be displayed as a name of the message sender.</param>
         /// <param name="customIcon">Icon that will be used as a sender avatar.</param>
@@ -47,6 +48,7 @@ namespace Serilog.Sinks.Slack
             this LoggerSinkConfiguration loggerSinkConfiguration,
             string webhookUrl,
             int? batchSizeLimit = null,
+            int? queueLimit = 100000,
             TimeSpan? period = null,
             string customChannel = null,
             string customUsername = null,
@@ -69,6 +71,7 @@ namespace Serilog.Sinks.Slack
                 webhookUrl,
                 formatter,
                 batchSizeLimit,
+                queueLimit,
                 period,
                 customChannel,
                 customUsername,
@@ -99,8 +102,9 @@ namespace Serilog.Sinks.Slack
         /// events into text for Slack. If control of regular text formatting is required, use the other overload of 
         /// <see cref="SlackSink"/> and specify the outputTemplate parameter instead.
         /// </param>
-        /// <param name="batchSizeLimit">The time to wait between checking for event batches.</param>
-        /// <param name="period">The time to wait between checking for event batches..</param>
+        /// <param name="batchSizeLimit">The maximum number of events to include in a single batch.</param>
+        /// <param name="queueLimit">The maximum number of events to hold in the sink's internal queue, or <c>null</c> for an unbounded queue. The default is <c>100000</c>.</param>
+        /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="customChannel">Name of Slack channel to which message should be posted.</param>
         /// <param name="customUsername">User name that will be displayed as a name of the message sender.</param>
         /// <param name="customIcon">Icon that will be used as a sender avatar.</param>
@@ -119,6 +123,7 @@ namespace Serilog.Sinks.Slack
             string webhookUrl,
             ITextFormatter formatter,
             int? batchSizeLimit = null,
+            int? queueLimit = 100000,
             TimeSpan? period = null,
             string customChannel = null,
             string customUsername = null,
@@ -146,7 +151,8 @@ namespace Serilog.Sinks.Slack
                 PropertyAllowList = propertyAllowList,
                 PropertyDenyList = propertyDenyList,
                 ShowExceptionAttachments = showExceptionAttachments,
-                TimestampFormat = timestampFormat
+                TimestampFormat = timestampFormat,
+                QueueLimit = queueLimit
             };
 
             if (batchSizeLimit.HasValue)

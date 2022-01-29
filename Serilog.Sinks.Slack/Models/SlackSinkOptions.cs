@@ -58,6 +58,12 @@ namespace Serilog.Sinks.Slack.Models
         public int BatchSizeLimit { get; set; } = 50;
 
         /// <summary>
+        /// Maximum number of events to hold in the sink's internal queue, or <c>null</c>
+        /// for an unbounded queue. The default is <c>100000</c>.
+        /// </summary>
+        public int? QueueLimit { get; set; } = 100000;
+
+        /// <summary>
         /// Optional: The maximum period between message batches. Defaults to 5 seconds.
         /// </summary>
         public TimeSpan Period { get; set; } = TimeSpan.FromSeconds(5);
