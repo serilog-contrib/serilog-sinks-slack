@@ -101,17 +101,19 @@ namespace Serilog.Sinks.Slack
 
         protected Message CreateMessage(LogEvent logEvent)
         {
-            var textWriter = new StringWriter();
-            _textFormatter.Format(logEvent, textWriter);
-
-            return new Message
+            using (var textWriter = new StringWriter())
             {
-                Text = textWriter.ToString(),
-                Channel = _options.CustomChannel,
-                UserName = _options.CustomUserName,
-                IconEmoji = _options.CustomIcon,
-                Attachments = CreateAttachments(logEvent).ToList()
-            };
+                _textFormatter.Format(logEvent, textWriter);
+
+                return new Message
+                {
+                    Text = textWriter.ToString(),
+                    Channel = _options.CustomChannel,
+                    UserName = _options.CustomUserName,
+                    IconEmoji = _options.CustomIcon,
+                    Attachments = CreateAttachments(logEvent).ToList()
+                };
+            }
         }
 
         protected IEnumerable<Attachment> CreateAttachments(LogEvent logEvent)
@@ -137,24 +139,26 @@ namespace Serilog.Sinks.Slack
             {
                 var fields = new List<Field>();
 
-                var stringWriter = new StringWriter();
-                foreach (KeyValuePair<string, LogEventPropertyValue> property in logEvent.Properties)
+                using (var stringWriter = new StringWriter())
                 {
-                    if (!_options.PropertyAllowList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
-                        continue;
-                    else if (_options.PropertyDenyList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
-                        continue;
-
-                    property.Value.Render(stringWriter);
-                    var field = new Field
+                    foreach (KeyValuePair<string, LogEventPropertyValue> property in logEvent.Properties)
                     {
-                        Title = property.Key,
-                        Value = stringWriter.ToString(),
-                        Short = _options.PropertyAttachmentsShortFormat
-                    };
-                    fields.Add(field);
+                        if (!_options.PropertyAllowList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
+                            continue;
+                        else if (_options.PropertyDenyList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
+                            continue;
 
-                    stringWriter.GetStringBuilder().Clear();
+                        property.Value.Render(stringWriter);
+                        var field = new Field
+                        {
+                            Title = property.Key,
+                            Value = stringWriter.ToString(),
+                            Short = _options.PropertyAttachmentsShortFormat
+                        };
+                        fields.Add(field);
+
+                        stringWriter.GetStringBuilder().Clear();
+                    }
                 }
 
                 if (fields.Any())
