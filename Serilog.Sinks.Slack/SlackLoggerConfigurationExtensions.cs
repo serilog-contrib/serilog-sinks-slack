@@ -27,7 +27,6 @@ namespace Serilog.Sinks.Slack
         /// <param name="loggerSinkConfiguration">Instance of <see cref="LoggerSinkConfiguration"/> object.</param>
         /// <param name="webhookUrl">Slack team post URI.</param>
         /// <param name="batchSizeLimit">The maximum number of events to include in a single batch.</param>
-        /// <param name="queueLimit">The maximum number of events to hold in the sink's internal queue, or <c>null</c> for an unbounded queue. The default is <c>100000</c>.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="customChannel">Name of Slack channel to which message should be posted.</param>
         /// <param name="customUsername">User name that will be displayed as a name of the message sender.</param>
@@ -43,12 +42,12 @@ namespace Serilog.Sinks.Slack
         /// <param name="propertyAllowList">If specified, only properties that match (case-insensitive) the name in the list are logged. Takes precedence over <see cref="SlackSinkOptions.PropertyDenyList"/></param>
         /// <param name="propertyDenyList">If specified, only properties that are not in this list are logged.</param>
         /// <param name="timestampFormat">The <see href="https://docs.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings"> date and time format</see> for timestamps in messages.</param>
+        /// <param name="queueLimit">The maximum number of events to hold in the sink's internal queue, or <c>null</c> for an unbounded queue. The default is <c>100000</c>.</param>
         /// <returns>Instance of <see cref="LoggerConfiguration"/> object.</returns>
         public static LoggerConfiguration Slack(
             this LoggerSinkConfiguration loggerSinkConfiguration,
             string webhookUrl,
             int? batchSizeLimit = null,
-            int? queueLimit = 100000,
             TimeSpan? period = null,
             string customChannel = null,
             string customUsername = null,
@@ -63,7 +62,8 @@ namespace Serilog.Sinks.Slack
             IFormatProvider formatProvider = null,
             List<string> propertyAllowList = null,
             List<string> propertyDenyList = null,
-            string timestampFormat = null)
+            string timestampFormat = null,
+            int? queueLimit = 100000)
         {
 
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
@@ -71,7 +71,6 @@ namespace Serilog.Sinks.Slack
                 webhookUrl,
                 formatter,
                 batchSizeLimit,
-                queueLimit,
                 period,
                 customChannel,
                 customUsername,
@@ -84,7 +83,8 @@ namespace Serilog.Sinks.Slack
                 restrictedToMinimumLevel,
                 propertyAllowList,
                 propertyDenyList,
-                timestampFormat);
+                timestampFormat,
+                queueLimit);
         }
 
         /// <summary>
@@ -103,7 +103,6 @@ namespace Serilog.Sinks.Slack
         /// <see cref="SlackSink"/> and specify the outputTemplate parameter instead.
         /// </param>
         /// <param name="batchSizeLimit">The maximum number of events to include in a single batch.</param>
-        /// <param name="queueLimit">The maximum number of events to hold in the sink's internal queue, or <c>null</c> for an unbounded queue. The default is <c>100000</c>.</param>
         /// <param name="period">The time to wait between checking for event batches.</param>
         /// <param name="customChannel">Name of Slack channel to which message should be posted.</param>
         /// <param name="customUsername">User name that will be displayed as a name of the message sender.</param>
@@ -117,13 +116,13 @@ namespace Serilog.Sinks.Slack
         /// <param name="propertyAllowList">If specified, only properties that match (case-insensitive) the name in the list are logged. Takes precedence over <see cref="SlackSinkOptions.PropertyDenyList"/></param>
         /// <param name="propertyDenyList">If specified, only properties that are not in this list are logged.</param>
         /// <param name="timestampFormat">The <see href="https://docs.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings"> date and time format</see> for timestamps in messages.</param>
+        /// <param name="queueLimit">The maximum number of events to hold in the sink's internal queue, or <c>null</c> for an unbounded queue. The default is <c>100000</c>.</param>
         /// <returns>Instance of <see cref="LoggerConfiguration"/> object.</returns>
         public static LoggerConfiguration Slack(
             this LoggerSinkConfiguration loggerSinkConfiguration,
             string webhookUrl,
             ITextFormatter formatter,
             int? batchSizeLimit = null,
-            int? queueLimit = 100000,
             TimeSpan? period = null,
             string customChannel = null,
             string customUsername = null,
@@ -136,7 +135,8 @@ namespace Serilog.Sinks.Slack
             LogEventLevel restrictedToMinimumLevel = LevelAlias.Minimum,
             List<string> propertyAllowList = null,
             List<string> propertyDenyList = null,
-            string timestampFormat = null)
+            string timestampFormat = null,
+            int? queueLimit = 100000)
         {
             var slackSinkOptions = new SlackSinkOptions
             {
