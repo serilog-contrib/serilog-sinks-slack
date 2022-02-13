@@ -11,7 +11,7 @@ namespace Serilog.Sinks.Slack.Sample
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Verbose()
                 .WriteTo.Console(LogEventLevel.Debug)
-                //.WriteTo.Slack("https://hooks.slack.com/services/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", 20, 1000, TimeSpan.FromSeconds(10), "#test", "Im a Ghost", ":ghost:")
+                //.WriteTo.Slack("https://hooks.slack.com/services/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", 20, TimeSpan.FromSeconds(10), "#test", "Im a Ghost", ":ghost:", queueLimit: 1000)
                 .WriteTo.Slack(new SlackSinkOptions
                 {
                     WebHookUrl = "https://hooks.slack.com/services/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",

@@ -40,7 +40,7 @@ Log.Logger = new LoggerConfiguration()
 Custom channel, username or icon:
 ```csharp
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Slack("https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", 20, 1000, TimeSpan.FromSeconds(10), "#general" ,"Im a Ghost", ":ghost:")
+    .WriteTo.Slack("https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", 20, TimeSpan.FromSeconds(10), "#general" ,"Im a Ghost", ":ghost:", queueLimit: 1000)
     .CreateLogger();
 ```
 
