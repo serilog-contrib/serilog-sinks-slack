@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Serilog.Events;
+using Serilog.Sinks.PeriodicBatching;
 
 namespace Serilog.Sinks.Slack.Models
 {
@@ -104,5 +105,19 @@ namespace Serilog.Sinks.Slack.Models
         /// for an unbounded queue. The default is <c>100000</c>.
         /// </summary>
         public int? QueueLimit { get; set; } = 100000;
+
+        /// <summary>
+        /// Maps options to <see cref="PeriodicBatchingSinkOptions"/> for use with <see cref="PeriodicBatchingSink"/> ctor.
+        /// </summary>
+        /// <returns>Instance of <see cref="PeriodicBatchingSinkOptions"/> object.</returns>
+        internal PeriodicBatchingSinkOptions ToPeriodicBatchingSinkOptions()
+        {
+            return new PeriodicBatchingSinkOptions
+            {
+                BatchSizeLimit = BatchSizeLimit,
+                Period = Period,
+                QueueLimit = QueueLimit
+            };
+        }
     }
 }
