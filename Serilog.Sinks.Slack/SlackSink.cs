@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Sinks.PeriodicBatching;
@@ -14,9 +15,9 @@ using Serilog.Sinks.Slack.Models;
 namespace Serilog.Sinks.Slack
 {
     /// <summary>
-    /// Implements <see cref="PeriodicBatchingSink"/> and provides means needed for sending Serilog log events to Slack.
+    /// Implements <see cref="ILogEventSink"/>, <see cref="IBatchedLogEventSink"/>, <see cref="IDisposable"/> and provides means needed for sending Serilog log events to Slack.
     /// </summary>
-    public class SlackSink : PeriodicBatchingSink
+    public class SlackSink : ILogEventSink, IBatchedLogEventSink, IDisposable
     {
         private readonly HttpClient Client = new HttpClient();
 
@@ -27,6 +28,8 @@ namespace Serilog.Sinks.Slack
 
         private readonly SlackSinkOptions _options;
         private readonly ITextFormatter _textFormatter;
+        private readonly PeriodicBatchingSink _periodicBatchingSink;
+        private bool _disposed = false;
 
         /// <summary>
         /// Initializes new instance of <see cref="SlackSink"/>.
@@ -34,18 +37,27 @@ namespace Serilog.Sinks.Slack
         /// <param name="options">Slack sink options object.</param>
         /// <param name="textFormatter">Formatter used to convert log events to text.</param>
         public SlackSink(SlackSinkOptions options, ITextFormatter textFormatter)
-            : base(options.BatchSizeLimit, options.Period, options.QueueLimit ?? PeriodicBatchingSink.NoQueueLimit)
         {
             _options = options;
             _textFormatter = textFormatter;
+            _periodicBatchingSink = new PeriodicBatchingSink(this, options.ToPeriodicBatchingSinkOptions());
         }
 
         /// <summary>
-        /// Overrides <see cref="PeriodicBatchingSink.EmitBatchAsync"/> method and uses <see cref="HttpClient"/> to post <see cref="LogEvent"/> to Slack.
-        /// /// </summary>
+        /// Implements <see cref="ILogEventSink.Emit"/> method and forwards the <see cref="LogEvent"/> to the underlying <see cref="PeriodicBatchingSink"/>.
+        /// </summary>
+        /// <param name="logEvent">The <see cref="LogEvent"/>.</param>
+        void ILogEventSink.Emit(LogEvent logEvent)
+        {
+            _periodicBatchingSink.Emit(logEvent);
+        }
+
+        /// <summary>
+        /// Implements <see cref="IBatchedLogEventSink.EmitBatchAsync"/> method and uses <see cref="HttpClient"/> to post <see cref="LogEvent"/> to Slack.
+        /// </summary>
         /// <param name="events">Collection of <see cref="LogEvent"/>.</param>
         /// <returns>Awaitable task.</returns>
-        protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
+        async Task IBatchedLogEventSink.EmitBatchAsync(IEnumerable<LogEvent> events)
         {
             foreach (var logEvent in events)
             {
@@ -56,10 +68,35 @@ namespace Serilog.Sinks.Slack
             }
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Implements <see cref="IBatchedLogEventSink.OnEmptyBatchAsync"/> method and performs a no-op.
+        /// </summary>
+        /// <returns>Awaitable task.</returns>
+        Task IBatchedLogEventSink.OnEmptyBatchAsync()
         {
-            base.Dispose(disposing);
-            Client.Dispose();
+            return Task.Delay(0);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                Client.Dispose();
+                _periodicBatchingSink.Dispose();
+            }
+
+            _disposed = true;
         }
 
         protected Message CreateMessage(LogEvent logEvent)
