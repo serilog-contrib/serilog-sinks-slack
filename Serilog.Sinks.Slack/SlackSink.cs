@@ -19,9 +19,9 @@ namespace Serilog.Sinks.Slack
     /// </summary>
     public class SlackSink : ILogEventSink, IBatchedLogEventSink, IDisposable
     {
-        private readonly HttpClient Client = new HttpClient();
+        private readonly HttpClient _client = new HttpClient();
 
-        private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore
         };
@@ -63,8 +63,8 @@ namespace Serilog.Sinks.Slack
             {
                 if (logEvent.Level < _options.MinimumLogEventLevel) continue;
                 var message = CreateMessage(logEvent);
-                var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                await Client.PostAsync(_options.WebHookUrl, new StringContent(json));
+                var json = JsonConvert.SerializeObject(message, _jsonSerializerSettings);
+                await _client.PostAsync(_options.WebHookUrl, new StringContent(json));
             }
         }
 
@@ -92,7 +92,7 @@ namespace Serilog.Sinks.Slack
 
             if (disposing)
             {
-                Client.Dispose();
+                _client.Dispose();
                 _periodicBatchingSink.Dispose();
             }
 
