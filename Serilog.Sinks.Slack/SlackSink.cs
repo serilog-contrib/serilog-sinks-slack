@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Sinks.PeriodicBatching;
@@ -14,19 +15,21 @@ using Serilog.Sinks.Slack.Models;
 namespace Serilog.Sinks.Slack
 {
     /// <summary>
-    /// Implements <see cref="PeriodicBatchingSink"/> and provides means needed for sending Serilog log events to Slack.
+    /// Implements <see cref="ILogEventSink"/>, <see cref="IBatchedLogEventSink"/>, <see cref="IDisposable"/> and provides means needed for sending Serilog log events to Slack.
     /// </summary>
-    public class SlackSink : PeriodicBatchingSink
+    public class SlackSink : ILogEventSink, IBatchedLogEventSink, IDisposable
     {
-        private readonly HttpClient Client = new HttpClient();
+        private readonly HttpClient _client = new HttpClient();
 
-        private readonly JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+        private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore
         };
 
         private readonly SlackSinkOptions _options;
         private readonly ITextFormatter _textFormatter;
+        private readonly PeriodicBatchingSink _periodicBatchingSink;
+        private bool _disposed = false;
 
         /// <summary>
         /// Initializes new instance of <see cref="SlackSink"/>.
@@ -34,47 +37,83 @@ namespace Serilog.Sinks.Slack
         /// <param name="options">Slack sink options object.</param>
         /// <param name="textFormatter">Formatter used to convert log events to text.</param>
         public SlackSink(SlackSinkOptions options, ITextFormatter textFormatter)
-            : base(options.BatchSizeLimit, options.Period)
         {
             _options = options;
             _textFormatter = textFormatter;
+            _periodicBatchingSink = new PeriodicBatchingSink(this, options.ToPeriodicBatchingSinkOptions());
         }
 
         /// <summary>
-        /// Overrides <see cref="PeriodicBatchingSink.EmitBatchAsync"/> method and uses <see cref="HttpClient"/> to post <see cref="LogEvent"/> to Slack.
-        /// /// </summary>
+        /// Implements <see cref="ILogEventSink.Emit"/> method and forwards the <see cref="LogEvent"/> to the underlying <see cref="PeriodicBatchingSink"/>.
+        /// </summary>
+        /// <param name="logEvent">The <see cref="LogEvent"/>.</param>
+        void ILogEventSink.Emit(LogEvent logEvent)
+        {
+            _periodicBatchingSink.Emit(logEvent);
+        }
+
+        /// <summary>
+        /// Implements <see cref="IBatchedLogEventSink.EmitBatchAsync"/> method and uses <see cref="HttpClient"/> to post <see cref="LogEvent"/> to Slack.
+        /// </summary>
         /// <param name="events">Collection of <see cref="LogEvent"/>.</param>
         /// <returns>Awaitable task.</returns>
-        protected override async Task EmitBatchAsync(IEnumerable<LogEvent> events)
+        async Task IBatchedLogEventSink.EmitBatchAsync(IEnumerable<LogEvent> events)
         {
             foreach (var logEvent in events)
             {
                 if (logEvent.Level < _options.MinimumLogEventLevel) continue;
                 var message = CreateMessage(logEvent);
-                var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                await Client.PostAsync(_options.WebHookUrl, new StringContent(json));
+                var json = JsonConvert.SerializeObject(message, _jsonSerializerSettings);
+                await _client.PostAsync(_options.WebHookUrl, new StringContent(json));
             }
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Implements <see cref="IBatchedLogEventSink.OnEmptyBatchAsync"/> method and performs a no-op.
+        /// </summary>
+        /// <returns>Awaitable task.</returns>
+        Task IBatchedLogEventSink.OnEmptyBatchAsync()
         {
-            base.Dispose(disposing);
-            Client.Dispose();
+            return Task.Delay(0);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                _client.Dispose();
+                _periodicBatchingSink.Dispose();
+            }
+
+            _disposed = true;
         }
 
         protected Message CreateMessage(LogEvent logEvent)
         {
-            var textWriter = new StringWriter();
-            _textFormatter.Format(logEvent, textWriter);
-
-            return new Message
+            using (var textWriter = new StringWriter())
             {
-                Text = textWriter.ToString(),
-                Channel = _options.CustomChannel,
-                UserName = _options.CustomUserName,
-                IconEmoji = _options.CustomIcon,
-                Attachments = CreateAttachments(logEvent).ToList()
-            };
+                _textFormatter.Format(logEvent, textWriter);
+
+                return new Message
+                {
+                    Text = textWriter.ToString(),
+                    Channel = _options.CustomChannel,
+                    UserName = _options.CustomUserName,
+                    IconEmoji = _options.CustomIcon,
+                    Attachments = CreateAttachments(logEvent).ToList()
+                };
+            }
         }
 
         protected IEnumerable<Attachment> CreateAttachments(LogEvent logEvent)
@@ -100,24 +139,26 @@ namespace Serilog.Sinks.Slack
             {
                 var fields = new List<Field>();
 
-                var stringWriter = new StringWriter();
-                foreach (KeyValuePair<string, LogEventPropertyValue> property in logEvent.Properties)
+                using (var stringWriter = new StringWriter())
                 {
-                    if (!_options.PropertyAllowList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
-                        continue;
-                    else if (_options.PropertyDenyList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
-                        continue;
-
-                    property.Value.Render(stringWriter);
-                    var field = new Field
+                    foreach (KeyValuePair<string, LogEventPropertyValue> property in logEvent.Properties)
                     {
-                        Title = property.Key,
-                        Value = stringWriter.ToString(),
-                        Short = _options.PropertyAttachmentsShortFormat
-                    };
-                    fields.Add(field);
+                        if (!_options.PropertyAllowList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
+                            continue;
+                        else if (_options.PropertyDenyList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
+                            continue;
 
-                    stringWriter.GetStringBuilder().Clear();
+                        property.Value.Render(stringWriter);
+                        var field = new Field
+                        {
+                            Title = property.Key,
+                            Value = stringWriter.ToString(),
+                            Short = _options.PropertyAttachmentsShortFormat
+                        };
+                        fields.Add(field);
+
+                        stringWriter.GetStringBuilder().Clear();
+                    }
                 }
 
                 if (fields.Any())
