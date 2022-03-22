@@ -27,7 +27,7 @@ Sample
 ====
 ![Sample](/example.png?raw=true "Slack Sample")
 
-Usages
+Usage
 ====
 
 Minimal (using default WebHook integration settings)
@@ -40,24 +40,26 @@ Log.Logger = new LoggerConfiguration()
 Custom channel, username or icon:
 ```csharp
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.Slack("https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", 20, TimeSpan.FromSeconds(10), "#general" ,"Im a Ghost", ":ghost:", queueLimit: 1000)
+    .WriteTo.Slack("https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX", 20, TimeSpan.FromSeconds(10), "#general", "Slack Logger", ":ghost:", queueLimit: 1000)
     .CreateLogger();
 ```
 
 Advanced:
 ```csharp
- Log.Logger = new LoggerConfiguration()
+Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Verbose()
-    .WriteTo.Slack(new SlackSinkOptions()
-        {
-            WebHookUrl = "https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-            CustomChannel = "#test",
-            BatchSizeLimit = 20,
-            QueueLimit = 1000,
-            CustomIcon = ":ghost:",
-            Period = TimeSpan.FromSeconds(10),
-            ShowDefaultAttachments = false,
-            ShowExceptionAttachments = true,
-        })
-        .CreateLogger();
+    .WriteTo.Slack(new SlackSinkOptions
+    {
+        WebHookUrl = "https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        BatchSizeLimit = 20,
+        QueueLimit = 1000,
+        CustomUserName = "Slack Logger",
+        CustomIcon = ":ghost:",
+        Period = TimeSpan.FromSeconds(10),
+        ShowDefaultAttachments = false,
+        ShowExceptionAttachments = true,
+        MinimumLogEventLevel = LogEventLevel.Warning,
+        PropertyDenyList = new List<string> { "Level", "SourceContext" }
+    })
+    .CreateLogger();
 ```

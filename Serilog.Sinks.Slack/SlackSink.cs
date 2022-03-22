@@ -92,8 +92,8 @@ namespace Serilog.Sinks.Slack
 
             if (disposing)
             {
-                _client.Dispose();
                 _periodicBatchingSink.Dispose();
+                _client.Dispose();
             }
 
             _disposed = true;
