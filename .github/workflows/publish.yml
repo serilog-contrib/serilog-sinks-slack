@@ -6,11 +6,12 @@ on:
 
 jobs:
   publish:
+    name: build, pack and publish
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2      
-    - name: Publish NuGet
-      uses: brandedoutcast/publish-nuget@v2.5.5
+    - uses: actions/checkout@v2
+    - name: Publish to NuGet
+      uses: rohith/publish-nuget@v2
       with:
         PROJECT_FILE_PATH: Serilog.Sinks.Slack/Serilog.Sinks.Slack.csproj
         NUGET_KEY: ${{secrets.NUGET_KEY}}
