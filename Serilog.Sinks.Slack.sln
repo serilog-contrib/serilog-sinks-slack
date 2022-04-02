@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30413.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{721763D1-0FA7-42C4-A71B-91BBE31BB57D}"
 	ProjectSection(SolutionItems) = preProject
-		appveyor.yml = appveyor.yml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
 		README.md = README.md
 	EndProjectSection
 EndProject

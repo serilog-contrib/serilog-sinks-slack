@@ -31,6 +31,13 @@ namespace Serilog.Sinks.Slack
         private readonly PeriodicBatchingSink _periodicBatchingSink;
         private bool _disposed = false;
 
+#if NETFRAMEWORK
+        static SlackSink()
+        {
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+        }
+#endif
+
         /// <summary>
         /// Initializes new instance of <see cref="SlackSink"/>.
         /// </summary>
