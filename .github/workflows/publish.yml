@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Publish to NuGet
-      uses: rohith/publish-nuget@v2
+      uses: alirezanet/publish-nuget@v3.0.4
       with:
         PROJECT_FILE_PATH: Serilog.Sinks.Slack/Serilog.Sinks.Slack.csproj
         NUGET_KEY: ${{secrets.NUGET_KEY}}
