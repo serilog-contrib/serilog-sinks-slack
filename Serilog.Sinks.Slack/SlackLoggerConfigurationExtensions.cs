@@ -174,15 +174,20 @@ namespace Serilog.Sinks.Slack
                 ShowExceptionAttachments = showExceptionAttachments,
                 TimestampFormat = timestampFormat,
                 QueueLimit = queueLimit,
-#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
-                ProxyAddress = Uri.IsWellFormedUriString(proxyAddress, UriKind.Absolute) 
-                    ? new Uri(proxyAddress) : throw new ArgumentException("Proxy address invalid", nameof(proxyAddress)),
-                ProxyUsername = proxyUsername ?? "",
-                ProxyPassword = proxyPassword ?? "",
-#endif
+
             };
 
-            
+
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
+            if(proxyAddress != null)
+            {
+                slackSinkOptions.ProxyAddress = Uri.IsWellFormedUriString(proxyAddress, UriKind.Absolute) 
+                    ? new Uri(proxyAddress) : throw new ArgumentException("Proxy address invalid", nameof(proxyAddress));
+                slackSinkOptions.ProxyUsername = proxyUsername ?? "";
+                slackSinkOptions.ProxyPassword = proxyPassword ?? "";
+            }
+#endif
+
 
             if (batchSizeLimit.HasValue)
             {
