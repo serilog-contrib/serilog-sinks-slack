@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
+using System.Net;
+#endif
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Serilog.Core;
@@ -19,7 +22,7 @@ namespace Serilog.Sinks.Slack
     /// </summary>
     public class SlackSink : ILogEventSink, IBatchedLogEventSink, IDisposable
     {
-        private readonly HttpClient _client = new HttpClient();
+        private readonly HttpClient _client;
 
         private readonly JsonSerializerSettings _jsonSerializerSettings = new JsonSerializerSettings
         {
@@ -48,7 +51,22 @@ namespace Serilog.Sinks.Slack
             _options = options;
             _textFormatter = textFormatter;
             _periodicBatchingSink = new PeriodicBatchingSink(this, options.ToPeriodicBatchingSinkOptions());
+            _client = CreateHttpClient();
         }
+
+        HttpClient CreateHttpClient()
+        {
+            var handler = new HttpClientHandler();
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
+            if (_options.ProxyAddress != null)
+            {
+                handler.Proxy = new WebProxy(_options.ProxyAddress);
+                handler.Proxy.Credentials = new NetworkCredential(_options.ProxyUsername, _options.ProxyPassword);
+            }
+#endif
+            return new HttpClient(handler);
+        }
+
 
         /// <summary>
         /// Implements <see cref="ILogEventSink.Emit"/> method and forwards the <see cref="LogEvent"/> to the underlying <see cref="PeriodicBatchingSink"/>.

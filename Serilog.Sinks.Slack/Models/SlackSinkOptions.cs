@@ -106,6 +106,25 @@ namespace Serilog.Sinks.Slack.Models
         /// </summary>
         public int? QueueLimit { get; set; } = 100000;
 
+
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
+        /// <summary>
+        /// Proxy address the request to the webhook must go through.
+        /// </summary>
+        public Uri ProxyAddress { get; set; }
+
+        /// <summary>
+        /// Username authentication of the proxy
+        /// </summary>
+        public string ProxyUsername { get; set; }
+
+        /// <summary>
+        /// Password authentication of the proxy
+        /// </summary>
+        public string ProxyPassword { get; set; }
+#endif
+
+
         /// <summary>
         /// Maps options to <see cref="PeriodicBatchingSinkOptions"/> for use with <see cref="PeriodicBatchingSink"/> ctor.
         /// </summary>
