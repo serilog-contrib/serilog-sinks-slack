@@ -115,7 +115,7 @@ namespace Serilog.Sinks.Slack
                 return new Message
                 {
                     Text = textWriter.ToString(),
-                    Channel = _options.CustomChannel,
+                    Channel = logEvent.Properties.ContainsKey("CustomSlackChannel") ? logEvent.Properties["CustomSlackChannel"].ToString().Replace("\"", string.Empty) : _options.CustomChannel,
                     UserName = _options.CustomUserName,
                     IconEmoji = _options.CustomIcon,
                     Attachments = CreateAttachments(logEvent).ToList()
