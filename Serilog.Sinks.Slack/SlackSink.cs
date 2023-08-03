@@ -112,10 +112,13 @@ namespace Serilog.Sinks.Slack
             {
                 _textFormatter.Format(logEvent, textWriter);
 
+                logEvent.Properties.TryGetValue("CustomSlackChannel", out var customChannelNameValue);
+                var channelName = customChannelNameValue is LogEventPropertyValue name ? name.ToString().Replace("\"", string.Empty) : _options.CustomChannel;
+
                 return new Message
                 {
                     Text = textWriter.ToString(),
-                    Channel = logEvent.Properties.ContainsKey("CustomSlackChannel") ? logEvent.Properties["CustomSlackChannel"].ToString().Replace("\"", string.Empty) : _options.CustomChannel,
+                    Channel = channelName,
                     UserName = _options.CustomUserName,
                     IconEmoji = _options.CustomIcon,
                     Attachments = CreateAttachments(logEvent).ToList()
