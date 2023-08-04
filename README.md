@@ -64,7 +64,7 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 ```
 
-Scope overriden channel name:
+Scope overridden channel name:
 ```csharp
 using (_logger.BeginScope("{CustomSlackChannel}", customSlackChannel))
 {
