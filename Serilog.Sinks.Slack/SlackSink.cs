@@ -9,6 +9,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Sinks.PeriodicBatching;
+using Serilog.Sinks.Slack.Enums;
 using Serilog.Sinks.Slack.Helpers;
 using Serilog.Sinks.Slack.Models;
 
@@ -112,15 +113,12 @@ namespace Serilog.Sinks.Slack
             {
                 _textFormatter.Format(logEvent, textWriter);
 
-                logEvent.Properties.TryGetValue("CustomSlackChannel", out var customChannelNameValue);
-                var channelName = customChannelNameValue is LogEventPropertyValue name ? name.ToString().Replace("\"", string.Empty) : _options.CustomChannel;
-
                 return new Message
                 {
                     Text = textWriter.ToString(),
-                    Channel = channelName,
-                    UserName = _options.CustomUserName,
-                    IconEmoji = _options.CustomIcon,
+                    Channel = GetPropertyFromException(logEvent, OverridableProperties.CustomChannel, _options.CustomChannel),
+                    UserName = GetPropertyFromException(logEvent, OverridableProperties.CustomUserName, _options.CustomUserName),
+                    IconEmoji = GetPropertyFromException(logEvent, OverridableProperties.CustomIcon, _options.CustomIcon),
                     Attachments = CreateAttachments(logEvent).ToList()
                 };
             }
@@ -153,7 +151,9 @@ namespace Serilog.Sinks.Slack
                 {
                     foreach (KeyValuePair<string, LogEventPropertyValue> property in logEvent.Properties)
                     {
-                        if (!_options.PropertyAllowList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
+                        if (_options.PropertyOverrideList?.Any(x => Enum.GetName(typeof(OverridableProperties), x).Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
+                            continue;
+                        else if (!_options.PropertyAllowList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
                             continue;
                         else if (_options.PropertyDenyList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
                             continue;
@@ -216,6 +216,20 @@ namespace Serilog.Sinks.Slack
                 return;
 
             attachment.Fields.Add(field);
+        }
+
+        private string GetPropertyFromException(LogEvent logEvent, OverridableProperties overridableProperty, string defaultValue)
+        {
+            if (!_options.PropertyOverrideList?.Contains(overridableProperty) ?? true) return defaultValue;
+
+            var overridablePropertyName = Enum.GetName(typeof(OverridableProperties), overridableProperty);
+            if (!logEvent.Properties.TryGetValue(overridablePropertyName, out var logEventPropertyValue))
+                return defaultValue;
+
+            var stringValue = logEventPropertyValue.ToString().Replace("\"", string.Empty);
+            return !string.IsNullOrEmpty(stringValue)
+                ? stringValue
+                : defaultValue;
         }
 
         private static string ShortenMessage(string message, int maxLength)
