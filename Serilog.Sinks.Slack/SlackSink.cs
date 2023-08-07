@@ -223,10 +223,10 @@ namespace Serilog.Sinks.Slack
             if (!_options.PropertyOverrideList?.Contains(overridableProperty) ?? true) return defaultValue;
 
             var overridablePropertyName = Enum.GetName(typeof(OverridableProperties), overridableProperty);
-            if (!logEvent.Properties.TryGetValue(overridablePropertyName, out var logEventPropertyValue))
+            if (!logEvent.Properties.TryGetValue(overridablePropertyName, out var value))
                 return defaultValue;
 
-            var stringValue = logEventPropertyValue.ToString().Replace("\"", string.Empty);
+            var stringValue = value is LogEventPropertyValue logEventPropertyValue ? logEventPropertyValue.ToString().Replace("\"", string.Empty) : defaultValue;
             return !string.IsNullOrEmpty(stringValue)
                 ? stringValue
                 : defaultValue;
