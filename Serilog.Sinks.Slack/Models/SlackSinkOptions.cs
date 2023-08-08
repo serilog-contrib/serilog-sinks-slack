@@ -96,9 +96,9 @@ namespace Serilog.Sinks.Slack.Models
         public List<string> PropertyDenyList { get; set; }
 
         /// <summary>
-        /// Optional: A list of <see cref="SlackSinkOptions"> properties that are being overridden by properties in the messages.
+        /// Optional: A hashset of <see cref="SlackSinkOptions"> properties that are being overridden by properties in the messages.
         /// </summary>
-        public List<OverridableProperties> PropertyOverrideList { get; set; }
+        public HashSet<OverridableProperties> PropertyOverrideList { get; set; }
 
         /// <summary>
         /// Optional: The <see href="https://docs.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings"> date and time format</see> used for timestamps in the messages.
