@@ -116,9 +116,9 @@ namespace Serilog.Sinks.Slack
                 return new Message
                 {
                     Text = textWriter.ToString(),
-                    Channel = GetPropertyFromException(logEvent, OverridableProperties.CustomChannel, _options.CustomChannel),
-                    UserName = GetPropertyFromException(logEvent, OverridableProperties.CustomUserName, _options.CustomUserName),
-                    IconEmoji = GetPropertyFromException(logEvent, OverridableProperties.CustomIcon, _options.CustomIcon),
+                    Channel = GetPropertyFromLogEvent(logEvent, OverridableProperties.CustomChannel, _options.CustomChannel),
+                    UserName = GetPropertyFromLogEvent(logEvent, OverridableProperties.CustomUserName, _options.CustomUserName),
+                    IconEmoji = GetPropertyFromLogEvent(logEvent, OverridableProperties.CustomIcon, _options.CustomIcon),
                     Attachments = CreateAttachments(logEvent).ToList()
                 };
             }
@@ -218,7 +218,7 @@ namespace Serilog.Sinks.Slack
             attachment.Fields.Add(field);
         }
 
-        private string GetPropertyFromException(LogEvent logEvent, OverridableProperties overridableProperty, string defaultValue)
+        private string GetPropertyFromLogEvent(LogEvent logEvent, OverridableProperties overridableProperty, string defaultValue)
         {
             if (!_options.PropertyOverrideList?.Contains(overridableProperty) ?? true) return defaultValue;
 
