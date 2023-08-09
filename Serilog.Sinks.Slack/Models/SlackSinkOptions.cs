@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
+using Serilog.Sinks.Slack.Enums;
 
 namespace Serilog.Sinks.Slack.Models
 {
@@ -93,6 +94,11 @@ namespace Serilog.Sinks.Slack.Models
         /// Optional: A list of properties (including exception properties) that are excluded in the messages.
         /// </summary>
         public List<string> PropertyDenyList { get; set; }
+
+        /// <summary>
+        /// Optional: A hashset of <see cref="SlackSinkOptions"> properties that are being overridden by properties in the messages.
+        /// </summary>
+        public HashSet<OverridableProperties> PropertyOverrideList { get; set; }
 
         /// <summary>
         /// Optional: The <see href="https://docs.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings"> date and time format</see> used for timestamps in the messages.

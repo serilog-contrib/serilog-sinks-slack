@@ -9,6 +9,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Serilog.Formatting;
 using Serilog.Sinks.PeriodicBatching;
+using Serilog.Sinks.Slack.Enums;
 using Serilog.Sinks.Slack.Helpers;
 using Serilog.Sinks.Slack.Models;
 
@@ -115,9 +116,9 @@ namespace Serilog.Sinks.Slack
                 return new Message
                 {
                     Text = textWriter.ToString(),
-                    Channel = _options.CustomChannel,
-                    UserName = _options.CustomUserName,
-                    IconEmoji = _options.CustomIcon,
+                    Channel = GetPropertyFromLogEvent(logEvent, OverridableProperties.CustomChannel, _options.CustomChannel),
+                    UserName = GetPropertyFromLogEvent(logEvent, OverridableProperties.CustomUserName, _options.CustomUserName),
+                    IconEmoji = GetPropertyFromLogEvent(logEvent, OverridableProperties.CustomIcon, _options.CustomIcon),
                     Attachments = CreateAttachments(logEvent).ToList()
                 };
             }
@@ -150,7 +151,9 @@ namespace Serilog.Sinks.Slack
                 {
                     foreach (KeyValuePair<string, LogEventPropertyValue> property in logEvent.Properties)
                     {
-                        if (!_options.PropertyAllowList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
+                        if (_options.PropertyOverrideList?.Any(x => Enum.GetName(typeof(OverridableProperties), x).Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
+                            continue;
+                        else if (!_options.PropertyAllowList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
                             continue;
                         else if (_options.PropertyDenyList?.Any(x => x.Equals(property.Key, StringComparison.OrdinalIgnoreCase)) ?? false)
                             continue;
@@ -213,6 +216,20 @@ namespace Serilog.Sinks.Slack
                 return;
 
             attachment.Fields.Add(field);
+        }
+
+        private string GetPropertyFromLogEvent(LogEvent logEvent, OverridableProperties overridableProperty, string defaultValue)
+        {
+            if (!_options.PropertyOverrideList?.Contains(overridableProperty) ?? true) return defaultValue;
+
+            var overridablePropertyName = Enum.GetName(typeof(OverridableProperties), overridableProperty);
+            if (!logEvent.Properties.TryGetValue(overridablePropertyName, out var value))
+                return defaultValue;
+
+            var stringValue = value is LogEventPropertyValue logEventPropertyValue ? logEventPropertyValue.ToString().Replace("\"", string.Empty) : defaultValue;
+            return !string.IsNullOrEmpty(stringValue)
+                ? stringValue
+                : defaultValue;
         }
 
         private static string ShortenMessage(string message, int maxLength)
