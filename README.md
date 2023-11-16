@@ -66,3 +66,23 @@ Log.Logger = new LoggerConfiguration()
     })
     .CreateLogger();
 ```
+
+It's possible to override `CustomChannel`, `CustomUserName`, `CustomIcon` configs using `LogEvent` properties.
+Config overrides can be enabled by specifying them in `SlackSinkOptions` property `PropertyOverrideList`.
+```csharp
+new SlackSinkOptions
+{
+    WebHookUrl = "https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    CustomChannel = "#static_channel_name",
+    CustomUserName = "User Foo",
+    MinimumLogEventLevel = LogEventLevel.Fatal,
+    PropertyOverrideList = new List<OverridableProperties>() { OverridableProperties.CustomChannel }
+});
+```
+Config override using `Scope`:
+```csharp
+using (_logger.BeginScope("{CustomChannel}", dynamicChannelName))
+{
+    _logger.LogCritical(exception, message, args);
+}
+```
