@@ -63,7 +63,14 @@ namespace Serilog.Sinks.Slack
             List<string> propertyAllowList = null,
             List<string> propertyDenyList = null,
             string timestampFormat = null,
-            int? queueLimit = 100000)
+            int? queueLimit = 100000
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
+            ,
+            string proxyAddress = null,
+            string proxyUsername = null,
+            string proxyPassword = null
+#endif
+            )
         {
 
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
@@ -84,7 +91,14 @@ namespace Serilog.Sinks.Slack
                 propertyAllowList,
                 propertyDenyList,
                 timestampFormat,
-                queueLimit);
+                queueLimit
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
+                ,
+                proxyAddress,
+                proxyUsername,
+                proxyPassword
+#endif
+                );
         }
 
         /// <summary>
@@ -136,7 +150,14 @@ namespace Serilog.Sinks.Slack
             List<string> propertyAllowList = null,
             List<string> propertyDenyList = null,
             string timestampFormat = null,
-            int? queueLimit = 100000)
+            int? queueLimit = 100000
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
+            ,
+            string proxyAddress = null,
+            string proxyUsername = null,
+            string proxyPassword = null
+#endif
+            )
         {
             var slackSinkOptions = new SlackSinkOptions
             {
@@ -152,8 +173,21 @@ namespace Serilog.Sinks.Slack
                 PropertyDenyList = propertyDenyList,
                 ShowExceptionAttachments = showExceptionAttachments,
                 TimestampFormat = timestampFormat,
-                QueueLimit = queueLimit
+                QueueLimit = queueLimit,
+
             };
+
+
+#if NETSTANDARD2_0_OR_GREATER || NETFRAMEWORK
+            if(proxyAddress != null)
+            {
+                slackSinkOptions.ProxyAddress = Uri.IsWellFormedUriString(proxyAddress, UriKind.Absolute) 
+                    ? new Uri(proxyAddress) : throw new ArgumentException("Proxy address invalid", nameof(proxyAddress));
+                slackSinkOptions.ProxyUsername = proxyUsername ?? "";
+                slackSinkOptions.ProxyPassword = proxyPassword ?? "";
+            }
+#endif
+
 
             if (batchSizeLimit.HasValue)
             {

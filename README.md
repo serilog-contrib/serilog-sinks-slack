@@ -59,7 +59,10 @@ Log.Logger = new LoggerConfiguration()
         ShowDefaultAttachments = false,
         ShowExceptionAttachments = true,
         MinimumLogEventLevel = LogEventLevel.Warning,
-        PropertyDenyList = new List<string> { "Level", "SourceContext" }
+        PropertyDenyList = new List<string> { "Level", "SourceContext" },
+        ProxyAddress = new Uri("http://proxyAddress-or-ip:port"),
+        ProxyUsername = "",
+        ProxyPassword = ""
     })
     .CreateLogger();
 ```
