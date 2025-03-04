@@ -98,13 +98,13 @@ namespace Serilog.Sinks.Slack
                 return;
             }
 
+            _disposed = true;
+
             if (disposing)
             {
                 _periodicBatchingSink.Dispose();
                 _client.Dispose();
             }
-
-            _disposed = true;
         }
 
         protected Message CreateMessage(LogEvent logEvent)
