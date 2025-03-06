@@ -43,6 +43,7 @@ namespace Serilog.Sinks.Slack
         /// <param name="propertyDenyList">If specified, only properties that are not in this list are logged.</param>
         /// <param name="timestampFormat">The <see href="https://docs.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings"> date and time format</see> for timestamps in messages.</param>
         /// <param name="queueLimit">The maximum number of events to hold in the sink's internal queue, or <c>null</c> for an unbounded queue. The default is <c>100000</c>.</param>
+        /// <param name="minimumLogEventLevel">The minimum Log Level to log for this sink</param>
         /// <returns>Instance of <see cref="LoggerConfiguration"/> object.</returns>
         public static LoggerConfiguration Slack(
             this LoggerSinkConfiguration loggerSinkConfiguration,
@@ -63,7 +64,8 @@ namespace Serilog.Sinks.Slack
             List<string> propertyAllowList = null,
             List<string> propertyDenyList = null,
             string timestampFormat = null,
-            int? queueLimit = 100000)
+            int? queueLimit = 100000,
+            LogEventLevel minimumLogEventLevel = LogEventLevel.Verbose)
         {
 
             var formatter = new MessageTemplateTextFormatter(outputTemplate, formatProvider);
@@ -84,7 +86,8 @@ namespace Serilog.Sinks.Slack
                 propertyAllowList,
                 propertyDenyList,
                 timestampFormat,
-                queueLimit);
+                queueLimit,
+                minimumLogEventLevel);
         }
 
         /// <summary>
@@ -117,6 +120,7 @@ namespace Serilog.Sinks.Slack
         /// <param name="propertyDenyList">If specified, only properties that are not in this list are logged.</param>
         /// <param name="timestampFormat">The <see href="https://docs.microsoft.com/dotnet/standard/base-types/standard-date-and-time-format-strings"> date and time format</see> for timestamps in messages.</param>
         /// <param name="queueLimit">The maximum number of events to hold in the sink's internal queue, or <c>null</c> for an unbounded queue. The default is <c>100000</c>.</param>
+        /// <param name="minimumLogEventLevel">The minimum Log Level to log for this sink</param>
         /// <returns>Instance of <see cref="LoggerConfiguration"/> object.</returns>
         public static LoggerConfiguration Slack(
             this LoggerSinkConfiguration loggerSinkConfiguration,
@@ -136,7 +140,8 @@ namespace Serilog.Sinks.Slack
             List<string> propertyAllowList = null,
             List<string> propertyDenyList = null,
             string timestampFormat = null,
-            int? queueLimit = 100000)
+            int? queueLimit = 100000,
+            LogEventLevel minimumLogEventLevel = LogEventLevel.Verbose)
         {
             var slackSinkOptions = new SlackSinkOptions
             {
@@ -152,7 +157,8 @@ namespace Serilog.Sinks.Slack
                 PropertyDenyList = propertyDenyList,
                 ShowExceptionAttachments = showExceptionAttachments,
                 TimestampFormat = timestampFormat,
-                QueueLimit = queueLimit
+                QueueLimit = queueLimit,
+                MinimumLogEventLevel = minimumLogEventLevel
             };
 
             if (batchSizeLimit.HasValue)
